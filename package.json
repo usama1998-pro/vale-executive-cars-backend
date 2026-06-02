@@ -6,13 +6,13 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "prisma generate && ts-node scripts/migrate-deploy.ts && ts-node scripts/ensure-admin-from-env.ts && nest build && node -e \"const fs=require('fs');if(fs.existsSync('public'))fs.cpSync('public','dist/public',{recursive:true})\"",
+    "build": "prisma generate && node scripts/migrate-deploy.cjs && tsx scripts/ensure-admin-from-env.ts && nest build && node -e \"const fs=require('fs');if(fs.existsSync('public'))fs.cpSync('public','dist/public',{recursive:true})\"",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "migrate:deploy": "ts-node scripts/migrate-deploy.ts && ts-node scripts/ensure-admin-from-env.ts",
+    "migrate:deploy": "node scripts/migrate-deploy.cjs && tsx scripts/ensure-admin-from-env.ts",
     "migrate:status": "prisma migrate status",
     "migrate:resolve:simplify-user": "prisma migrate resolve --rolled-back 20260602130000_simplify_user",
-    "migrate:recover": "ts-node scripts/migrate-deploy.ts",
+    "migrate:recover": "node scripts/migrate-deploy.cjs",
     "prisma:studio": "prisma studio",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -27,7 +27,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "ensure-admin-from-env": "ts-node scripts/ensure-admin-from-env.ts",
+    "ensure-admin-from-env": "tsx scripts/ensure-admin-from-env.ts",
     "create-admin": "ts-node scripts/create-admin.ts"
   },
   "dependencies": {
@@ -53,6 +53,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "tsx": "^4.22.4",
     "winston": "^3.19.0"
   },
   "devDependencies": {

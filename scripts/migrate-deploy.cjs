@@ -1,15 +1,20 @@
 /**
- * Local/dev copy of migrate-deploy (TypeScript).
- * Production build uses `scripts/migrate-deploy.cjs` (plain Node, no ts-node).
+ * Production-safe `prisma migrate deploy` (plain Node — no ts-node).
+ * Used by `npm run build` when devDependencies are not installed.
  */
-import '../src/bootstrap-env';
-import { execSync } from 'node:child_process';
-import { join } from 'node:path';
+require('dotenv/config');
+
+const { execSync } = require('node:child_process');
+const { join } = require('node:path');
 
 const RECOVERABLE_MIGRATION = '20260602130000_simplify_user';
 const backendRoot = join(__dirname, '..');
 
-function run(command: string): string {
+const DEFAULT_TZ = 'Europe/London';
+const rawTz = process.env.TZ?.trim();
+process.env.TZ = rawTz && rawTz.length > 0 ? rawTz : DEFAULT_TZ;
+
+function run(command) {
   console.log(`\n> ${command}\n`);
   return execSync(command, {
     cwd: backendRoot,
@@ -19,7 +24,7 @@ function run(command: string): string {
   });
 }
 
-function tryRun(command: string): { ok: true; output: string } | { ok: false; output: string } {
+function tryRun(command) {
   console.log(`\n> ${command}\n`);
   try {
     const output = execSync(command, {
@@ -30,17 +35,14 @@ function tryRun(command: string): { ok: true; output: string } | { ok: false; ou
     });
     return { ok: true, output: output ?? '' };
   } catch (error) {
-    const err = error as {
-      stdout?: string;
-      stderr?: string;
-      message?: string;
-    };
-    const output = [err.stdout, err.stderr, err.message].filter(Boolean).join('\n');
+    const output = [error.stdout, error.stderr, error.message]
+      .filter(Boolean)
+      .join('\n');
     return { ok: false, output };
   }
 }
 
-function isRecoverableDeployFailure(output: string): boolean {
+function isRecoverableDeployFailure(output) {
   const text = output.toLowerCase();
   return (
     text.includes(RECOVERABLE_MIGRATION.toLowerCase()) ||
@@ -51,7 +53,7 @@ function isRecoverableDeployFailure(output: string): boolean {
   );
 }
 
-function migrationLooksFailedInStatus(statusOutput: string): boolean {
+function migrationLooksFailedInStatus(statusOutput) {
   const text = statusOutput.toLowerCase();
   return (
     text.includes('failed') &&
@@ -59,14 +61,14 @@ function migrationLooksFailedInStatus(statusOutput: string): boolean {
   );
 }
 
-function recoverFailedMigration(): void {
+function recoverFailedMigration() {
   console.log(
     `Recovering failed migration "${RECOVERABLE_MIGRATION}" before deploy…`,
   );
   run(`npx prisma migrate resolve --rolled-back ${RECOVERABLE_MIGRATION}`);
 }
 
-function main(): void {
+function main() {
   if (!process.env.DATABASE_URL?.trim()) {
     throw new Error(
       'migrate-deploy: DATABASE_URL is required (or DB_* vars that build it).',
