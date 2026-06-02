@@ -68,10 +68,37 @@ function recoverFailedMigration() {
   run(`npx prisma migrate resolve --rolled-back ${RECOVERABLE_MIGRATION}`);
 }
 
+function isDirectMysqlFamilyUrl(url) {
+  return /^mysql:\/\//i.test(url) || /^mariadb:\/\//i.test(url);
+}
+
+/** Same rules as src/core/database/database-url.ts (plain Node for production build). */
+function hasDatabaseConfig() {
+  const direct =
+    process.env.DATABASE_DIRECT_URL?.trim() || process.env.DIRECT_URL?.trim();
+  if (direct && isDirectMysqlFamilyUrl(direct)) {
+    return true;
+  }
+  const url = process.env.DATABASE_URL?.trim();
+  if (url && isDirectMysqlFamilyUrl(url)) {
+    return true;
+  }
+  const user = process.env.DATABASE_USER?.trim();
+  const password = process.env.DATABASE_PASSWORD;
+  const database = process.env.DATABASE_NAME?.trim();
+  return Boolean(user && password !== undefined && password !== '' && database);
+}
+
 function main() {
-  if (!process.env.DATABASE_URL?.trim()) {
+  if (process.env.PRISMA_BUILD_SCHEMA_ONLY === '1') {
     throw new Error(
-      'migrate-deploy: DATABASE_URL is required (or DB_* vars that build it).',
+      'migrate-deploy: PRISMA_BUILD_SCHEMA_ONLY=1 skips DB for generate only. Unset it for migrate deploy, or run migrations separately with real DB env.',
+    );
+  }
+
+  if (!hasDatabaseConfig()) {
+    throw new Error(
+      'migrate-deploy: database config required for migrations. Set DATABASE_URL (mysql://…), DATABASE_DIRECT_URL, or DATABASE_USER + DATABASE_PASSWORD + DATABASE_NAME on the build host.',
     );
   }
 
