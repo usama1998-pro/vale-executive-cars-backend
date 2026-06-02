@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+/// Django-style user: unique email, password hash, and `is_admin` staff flag.
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  isAdmin      Boolean  @default(false) @map("is_admin")
+  tokenVersion Int      @default(0) @map("token_version")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum BookingStatus {
+  pending
+  submitted
+  accepted
+  rejected
+  completed
+  cancelled
+}
+
+model Booking {
+  id               String        @id @default(uuid()) /// UUID primary key
+  bookingRef       String        @unique @db.VarChar(10) @map("booking_ref") /// Short numeric ref, e.g. 482917
+  customerName     String        @map("customer_name")
+  email            String
+  contactNumber    String        @map("contact_number")
+  pickupFrom       String        @map("pickup_from")
+  dropoffTo        String        @map("dropoff_to")
+  distanceMiles    Int           @map("distance_miles")
+  estimatedFare    Int           @map("estimated_fare")
+  vehicleType      String        @map("vehicle_type")
+  via              String
+  preferredPickupAt DateTime     @map("preferred_pickup_at")
+  status           BookingStatus @default(submitted)
+  submittedAt      DateTime      @default(now()) @map("submitted_at")
+  resolvedAt       DateTime?     @map("resolved_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@map("bookings")
+}
