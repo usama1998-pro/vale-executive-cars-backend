@@ -1,0 +1,7 @@
+# Copy to ngrok.yml or run: ngrok http 3001
+# The Nest API uses PORT=3001 (see backend/.env), not 3000.
+version: 2
+tunnels:
+  vec-api:
+    addr: 3001
+    proto: http

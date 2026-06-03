@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { UsersModule } from './modules/users/users.module';
 import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
+import { RoutingModule } from './modules/routing/routing.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
     BookingsModule,
     UsersModule,
     WhatsappModule,
+    RoutingModule,
   ],
   providers: [
     {

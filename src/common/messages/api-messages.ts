@@ -33,6 +33,12 @@ export const API_MESSAGES = {
   users: {
     listSuccess: 'Users loaded successfully.',
   },
+  routing: {
+    quoteSuccess: 'Route quote calculated successfully.',
+    fareSuccess: 'Fare calculated successfully.',
+    geocodeFailed: 'We could not find one of the addresses. Please check and try again.',
+    routeFailed: 'We could not calculate a driving route for this journey.',
+  },
   logs: {
     disabled:
       'File logging is disabled. Set LOG_FILE_ENABLED=true on the server.',
