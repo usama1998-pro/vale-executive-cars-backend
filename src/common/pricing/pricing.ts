@@ -78,15 +78,16 @@ export function metersToMiles(meters: number): number {
   return meters / 1609.344;
 }
 
-export function roundKm(meters: number): number {
-  return Math.round(metersToKm(meters));
-}
-
 export function roundMiles(meters: number): number {
   return Math.round(metersToMiles(meters));
 }
 
-/** Fare uses mile-based rates; convert km from the route to miles for pricing. */
+/** Approximate km equivalent for API consumers that still read distanceKm. */
+export function kmFromRoundedMiles(miles: number): number {
+  return Math.round(Math.max(0, miles) * 1.609344);
+}
+
+/** Fare uses mile-based rates. */
 export function calculateAllFaresFromMeters(
   distanceMeters: number,
 ): Record<VehicleType, number> {

@@ -39,6 +39,11 @@ export class UpdateBookingDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  roomNo?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   @MinLength(1)
   to?: string;
 

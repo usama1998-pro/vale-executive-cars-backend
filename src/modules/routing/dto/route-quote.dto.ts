@@ -38,10 +38,10 @@ export class RouteQuoteDto {
 }
 
 export class RouteFareDto {
-  @ApiProperty({ example: 550, description: 'Journey distance in kilometres' })
+  @ApiProperty({ example: 342, description: 'Journey distance in miles' })
   @IsNumber()
   @Min(0)
-  distanceKm!: number;
+  distanceMiles!: number;
 
   @ApiProperty({
     example: 'executive',

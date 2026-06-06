@@ -24,6 +24,7 @@ async function bootstrap() {
       'Authorization',
       'Accept',
       'X-Requested-With',
+      'ngrok-skip-browser-warning',
     ],
     credentials: true,
     maxAge: 86_400,

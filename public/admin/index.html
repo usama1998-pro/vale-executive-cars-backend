@@ -910,6 +910,10 @@
               <input id="editFrom" type="text" required />
             </div>
             <div class="field-inline">
+              <label for="editRoomNo">Room no.</label>
+              <input id="editRoomNo" type="text" placeholder="Optional" />
+            </div>
+            <div class="field-inline">
               <label for="editTo">Drop-off</label>
               <input id="editTo" type="text" required />
             </div>
@@ -1322,6 +1326,7 @@
         document.getElementById('editContactNumber').value = booking.contactNumber || '';
         document.getElementById('editStatus').value = booking.status || 'pending';
         document.getElementById('editFrom').value = booking.from || '';
+        document.getElementById('editRoomNo').value = booking.roomNo || '';
         document.getElementById('editTo').value = booking.to || '';
         document.getElementById('editVia').value = booking.via || '';
         document.getElementById('editVehicleType').value = booking.vehicleType || '';
@@ -1340,6 +1345,7 @@
           contactNumber: document.getElementById('editContactNumber').value.trim(),
           status: document.getElementById('editStatus').value,
           from: document.getElementById('editFrom').value.trim(),
+          roomNo: document.getElementById('editRoomNo').value.trim(),
           to: document.getElementById('editTo').value.trim(),
           via: document.getElementById('editVia').value.trim(),
           vehicleType: document.getElementById('editVehicleType').value.trim(),

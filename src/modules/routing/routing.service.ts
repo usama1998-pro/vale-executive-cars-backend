@@ -7,12 +7,12 @@ import {
   calculateAllFares,
   calculateAllFaresFromMeters,
   calculateFare,
-  metersToKm,
-  roundKm,
+  kmFromRoundedMiles,
+  metersToMiles,
   roundMiles,
   type VehicleType,
 } from '../../common/pricing/pricing';
-import { estimateDrivingKm, haversineKm } from '../../common/utils/geo.util';
+import { estimateDrivingMiles, haversineMiles } from '../../common/utils/geo.util';
 import { getRoutingConfig } from './routing.config';
 import { OsrmApiClient } from './clients/osrm-api.client';
 import { NominatimApiClient } from './clients/nominatim-api.client';
@@ -29,8 +29,8 @@ export type RouteQuoteResult = {
   to: GeocodedLocation;
   via?: GeocodedLocation;
   distanceMeters: number;
-  distanceKm: number;
   distanceMiles: number;
+  distanceKm: number;
   durationSeconds: number;
   durationMinutes: number;
   vehicleType: VehicleType;
@@ -68,8 +68,8 @@ export class RoutingService {
       waypoints[waypoints.length - 1].location,
     );
 
-    const distanceKm = roundKm(resolvedMeters);
     const distanceMiles = roundMiles(resolvedMeters);
+    const distanceKm = kmFromRoundedMiles(distanceMiles);
     const durationMinutes = Math.round(route.durationSeconds / 60);
     const fares = calculateAllFaresFromMeters(resolvedMeters);
 
@@ -78,8 +78,8 @@ export class RoutingService {
       to: waypoints[waypoints.length - 1].location,
       via: viaInput ? waypoints[1].location : undefined,
       distanceMeters: resolvedMeters,
-      distanceKm,
       distanceMiles,
+      distanceKm,
       durationSeconds: route.durationSeconds,
       durationMinutes,
       vehicleType: dto.vehicleType,
@@ -89,13 +89,13 @@ export class RoutingService {
   }
 
   getFare(dto: RouteFareDto) {
-    const distanceKm = Math.round(Math.max(0, dto.distanceKm));
-    const distanceMiles = roundMiles(distanceKm * 1000);
+    const distanceMiles = Math.round(Math.max(0, dto.distanceMiles));
+    const distanceKm = kmFromRoundedMiles(distanceMiles);
     const estimatedFare = calculateFare(distanceMiles, dto.vehicleType);
 
     return {
-      distanceKm,
       distanceMiles,
+      distanceKm,
       vehicleType: dto.vehicleType,
       estimatedFare,
       fares: calculateAllFares(distanceMiles),
@@ -142,23 +142,23 @@ export class RoutingService {
     to: GeocodedLocation,
   ): number {
     const config = getRoutingConfig();
-    const straightKm = haversineKm(from, to);
-    const osrmKm = metersToKm(osrmMeters);
+    const straightMiles = haversineMiles(from, to);
+    const osrmMiles = metersToMiles(osrmMeters);
 
-    if (straightKm <= 0) {
+    if (straightMiles <= 0) {
       return osrmMeters;
     }
 
-    const osrmLooksIncomplete = osrmKm <= straightKm * 1.12;
+    const osrmLooksIncomplete = osrmMiles <= straightMiles * 1.12;
     if (!osrmLooksIncomplete) {
       return osrmMeters;
     }
 
-    const estimatedKm = estimateDrivingKm(from, to, config.roadFactor);
+    const estimatedMiles = estimateDrivingMiles(from, to, config.roadFactor);
     this.logger.debug(
-      `OSRM ${osrmKm.toFixed(1)} km ≈ straight line; using estimated ${estimatedKm.toFixed(1)} km (×${config.roadFactor})`,
+      `OSRM ${osrmMiles.toFixed(1)} mi ≈ straight line; using estimated ${estimatedMiles.toFixed(1)} mi (×${config.roadFactor})`,
     );
-    return estimatedKm * 1000;
+    return estimatedMiles * 1609.344;
   }
 
   private async getDrivingRouteSafe(

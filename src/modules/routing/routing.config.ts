@@ -3,7 +3,7 @@ export type RoutingConfig = {
   nominatimBaseUrl: string;
   /** ISO country filter for Nominatim (comma-separated), e.g. `gb,pk`. */
   nominatimCountryCodes: string;
-  /** Multiplier applied to straight-line km when OSRM road data looks incomplete. */
+  /** Multiplier applied to straight-line miles when OSRM road data looks incomplete. */
   roadFactor: number;
   userAgent: string;
   requestTimeoutMs: number;

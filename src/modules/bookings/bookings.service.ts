@@ -33,6 +33,7 @@ export type BookingResponse = {
   email: string;
   contactNumber: string;
   from: string;
+  roomNo: string | null;
   to: string;
   distanceMiles: number;
   estimatedFare: number;
@@ -101,6 +102,7 @@ export class BookingsService {
       email: row.email,
       contactNumber: row.contactNumber,
       from: row.pickupFrom,
+      roomNo: row.roomNo,
       to: row.dropoffTo,
       distanceMiles: row.distanceMiles,
       estimatedFare: row.estimatedFare,
@@ -269,6 +271,9 @@ export class BookingsService {
     }
     if (dto.from !== undefined) {
       data.pickupFrom = dto.from.trim();
+    }
+    if (dto.roomNo !== undefined) {
+      data.roomNo = dto.roomNo.trim() || null;
     }
     if (dto.to !== undefined) {
       data.dropoffTo = dto.to.trim();
