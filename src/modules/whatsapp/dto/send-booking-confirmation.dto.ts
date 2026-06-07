@@ -3,6 +3,11 @@ import { IsDateString, IsOptional, IsString, MinLength } from 'class-validator';
 
 /** Admin test — message goes to WHATSAPP_TO; contactNumber is customer detail in the template. */
 export class SendBookingConfirmationDto {
+  @ApiProperty({ example: 'Usama' })
+  @IsString()
+  @MinLength(1)
+  customerName!: string;
+
   @ApiProperty({
     example: '923150523620',
     description: 'Customer phone (shown in template body for owner; not the WhatsApp recipient)',
@@ -11,35 +16,35 @@ export class SendBookingConfirmationDto {
   @MinLength(8)
   contactNumber!: string;
 
-  @ApiProperty({ example: 'Usama' })
+  @ApiProperty({ example: 'customer@example.com' })
+  @IsString()
+  @MinLength(3)
+  email!: string;
+
+  @ApiProperty({ example: 'Heathrow Airport Terminal 5' })
   @IsString()
   @MinLength(1)
-  customerName!: string;
+  departureLocation!: string;
 
-  @ApiPropertyOptional({ example: 'Vale Executives Cars' })
+  @ApiPropertyOptional({ example: 'None' })
   @IsOptional()
   @IsString()
-  businessName?: string;
+  stopoverLocation?: string;
 
-  @ApiProperty({ example: 'London to Birmingham' })
+  @ApiProperty({ example: 'Central London' })
   @IsString()
   @MinLength(1)
-  serviceLabel!: string;
+  destinationLocation!: string;
 
-  @ApiProperty({ example: '5 June 2026' })
+  @ApiProperty({ example: '5 June 2026 at 3:30 pm' })
   @IsString()
   @MinLength(1)
-  pickupDateLabel!: string;
-
-  @ApiProperty({ example: '3:30 PM' })
-  @IsString()
-  @MinLength(1)
-  pickupTimeLabel!: string;
+  travelDateLabel!: string;
 }
 
 export class TestBookingConfirmationFromBookingDto {
   @ApiPropertyOptional({
-    description: 'Optional pickup override for template date/time labels only',
+    description: 'Optional pickup override for template travel date label only',
   })
   @IsOptional()
   @IsDateString()

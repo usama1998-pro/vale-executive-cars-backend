@@ -93,9 +93,9 @@ export class WhatsappController {
   @UseGuards(StaffAdminGuard)
   @ApiAccessTokenInSwagger()
   @ApiOperation({
-    summary: 'Send booking_confirmation template (admin test)',
+    summary: 'Send custom_vale_booking template (admin test)',
     description:
-      'Sends via FACEBOOK_GRAPH_API. Recipient `to` is always WHATSAPP_TO (owner). `contactNumber` is customer detail for the template only.',
+      'Sends via FACEBOOK_GRAPH_API. Recipient `to` is always WHATSAPP_TO (owner). Customer fields are template body parameters only.',
   })
   @ApiResponse({ status: 503, description: 'WhatsApp is not configured' })
   sendTemplate(@Body() dto: SendBookingConfirmationDto) {
@@ -115,10 +115,12 @@ export class WhatsappController {
     return this.messaging.sendBookingConfirmationTemplate({
       to,
       customerName: dto.customerName,
-      businessName: dto.businessName,
-      serviceLabel: dto.serviceLabel,
-      pickupDateLabel: dto.pickupDateLabel,
-      pickupTimeLabel: dto.pickupTimeLabel,
+      contactNumber: dto.contactNumber,
+      email: dto.email,
+      departureLocation: dto.departureLocation,
+      stopoverLocation: dto.stopoverLocation ?? 'None',
+      destinationLocation: dto.destinationLocation,
+      travelDateLabel: dto.travelDateLabel,
     });
   }
 
@@ -126,7 +128,7 @@ export class WhatsappController {
   @UseGuards(StaffAdminGuard)
   @ApiAccessTokenInSwagger()
   @ApiOperation({
-    summary: 'Send booking_confirmation for an existing booking (admin)',
+    summary: 'Send custom_vale_booking for an existing booking (admin)',
     description:
       'WhatsApp `to` is always WHATSAPP_TO (owner). Booking customer contactNumber is stored on the booking only.',
   })

@@ -1,6 +1,9 @@
 /** Meta utility templates: each body text variable max 30 characters. */
 export const UTILITY_TEMPLATE_TEXT_MAX_LENGTH = 30;
 
+/** Meta custom templates: longer body text variables (e.g. addresses). */
+export const CUSTOM_TEMPLATE_TEXT_MAX_LENGTH = 1024;
+
 /** Meta rejects newlines/tabs and long runs of spaces in template variable text. */
 export function sanitizeTemplateParameter(
   value: string,

@@ -2,18 +2,36 @@ import type {
   WhatsappSendTemplateRequest,
   WhatsappTemplateBodyComponent,
 } from '../types/whatsapp-api.types';
-import { sanitizeTemplateParameter } from '../utils/template-parameter.util';
+import {
+  CUSTOM_TEMPLATE_TEXT_MAX_LENGTH,
+  sanitizeTemplateParameter,
+} from '../utils/template-parameter.util';
 
+/**
+ * Meta template: custom_vale_booking
+ *
+ * A new customer inquiry has been received.
+ *
+ * Customer Information:
+ * • Name: {{1}}
+ * • Phone Number: {{2}}
+ * • Email Address: {{3}}
+ *
+ * Journey Information:
+ * • Departure Location: {{4}}
+ * • Stopover Location: {{5}}
+ * • Destination Location: {{6}}
+ * • Travel Date: {{7}}
+ */
 export type BookingConfirmationTemplateInput = {
   to: string;
-  /** {{1}} Hello {{1}}, */
   customerName: string;
-  /** {{2}} Thank you for booking with {{2}}. */
-  businessName: string;
-  /** {{3}} Your appointment for {{3}} … (max 30 chars, utility template) */
-  serviceLabel: string;
-  pickupDateLabel: string;
-  pickupTimeLabel: string;
+  contactNumber: string;
+  email: string;
+  departureLocation: string;
+  stopoverLocation: string;
+  destinationLocation: string;
+  travelDateLabel: string;
   templateName: string;
   languageCode: string;
 };
@@ -24,14 +42,38 @@ export function buildBookingConfirmationBodyComponent(
     'to' | 'templateName' | 'languageCode'
   >,
 ): WhatsappTemplateBodyComponent {
+  const maxLength = CUSTOM_TEMPLATE_TEXT_MAX_LENGTH;
   return {
     type: 'body',
     parameters: [
-      { type: 'text', text: sanitizeTemplateParameter(input.customerName) },
-      { type: 'text', text: sanitizeTemplateParameter(input.businessName) },
-      { type: 'text', text: sanitizeTemplateParameter(input.serviceLabel) },
-      { type: 'text', text: sanitizeTemplateParameter(input.pickupDateLabel) },
-      { type: 'text', text: sanitizeTemplateParameter(input.pickupTimeLabel) },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.customerName, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.contactNumber, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.email, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.departureLocation, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.stopoverLocation, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.destinationLocation, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.travelDateLabel, maxLength),
+      },
     ],
   };
 }
@@ -49,10 +91,12 @@ export function buildBookingConfirmationTemplateRequest(
       components: [
         buildBookingConfirmationBodyComponent({
           customerName: input.customerName,
-          businessName: input.businessName,
-          serviceLabel: input.serviceLabel,
-          pickupDateLabel: input.pickupDateLabel,
-          pickupTimeLabel: input.pickupTimeLabel,
+          contactNumber: input.contactNumber,
+          email: input.email,
+          departureLocation: input.departureLocation,
+          stopoverLocation: input.stopoverLocation,
+          destinationLocation: input.destinationLocation,
+          travelDateLabel: input.travelDateLabel,
         }),
       ],
     },

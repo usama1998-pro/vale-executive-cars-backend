@@ -4,10 +4,6 @@ import { PrismaService } from '../../core/database/prisma.service';
 import { getWhatsappConfig } from './whatsapp.config';
 import { resolveOwnerWhatsappTo } from './utils/phone.util';
 import {
-  sanitizeTemplateParameter,
-  UTILITY_TEMPLATE_TEXT_MAX_LENGTH,
-} from './utils/template-parameter.util';
-import {
   WhatsappMessagingService,
   type WhatsappSendResult,
 } from './whatsapp-messaging.service';
@@ -21,37 +17,29 @@ export class BookingWhatsappService {
     private readonly messaging: WhatsappMessagingService,
   ) {}
 
-  private formatPickupLabels(pickupAt: Date): {
-    pickupDateLabel: string;
-    pickupTimeLabel: string;
-  } {
+  private formatTravelDateLabel(pickupAt: Date): string {
     const timeZone = process.env.TZ || 'Europe/London';
-    const pickupDateLabel = pickupAt.toLocaleDateString('en-GB', {
+    const dateLabel = pickupAt.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
       timeZone,
     });
-    const pickupTimeLabel = pickupAt.toLocaleTimeString('en-GB', {
+    const timeLabel = pickupAt.toLocaleTimeString('en-GB', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
       timeZone,
     });
-    return { pickupDateLabel, pickupTimeLabel };
+    return `${dateLabel} at ${timeLabel}`;
   }
 
-  /**
-   * Template {{3}} for owner: vehicle + customer contact (max 30 chars).
-   */
-  private ownerServiceLabel(booking: Booking): string {
-    const vehicle = booking.vehicleType?.trim();
-    const contactDigits = booking.contactNumber.replace(/\D/g, '');
-    const contactShort = contactDigits.slice(-11);
-    const route = vehicle
-      ? `${vehicle} · ${contactShort}`
-      : contactShort || 'New booking';
-    return sanitizeTemplateParameter(route, UTILITY_TEMPLATE_TEXT_MAX_LENGTH);
+  private formatStopoverLocation(via: string): string {
+    const trimmed = via.trim();
+    if (!trimmed || trimmed.toLowerCase() === 'car') {
+      return 'None';
+    }
+    return trimmed;
   }
 
   async sendBookingConfirmation(booking: Booking): Promise<WhatsappSendResult> {
@@ -79,17 +67,15 @@ export class BookingWhatsappService {
       `WhatsApp owner notify → ${to} | ref=${booking.bookingRef} customer=${booking.customerName} contact=${booking.contactNumber}`,
     );
 
-    const { pickupDateLabel, pickupTimeLabel } = this.formatPickupLabels(
-      booking.preferredPickupAt,
-    );
-
     return this.messaging.sendBookingConfirmationTemplate({
       to,
       customerName: booking.customerName,
-      serviceLabel: this.ownerServiceLabel(booking),
-      pickupDateLabel,
-      pickupTimeLabel,
-      businessName: config.businessName,
+      contactNumber: booking.contactNumber,
+      email: booking.email,
+      departureLocation: booking.pickupFrom,
+      stopoverLocation: this.formatStopoverLocation(booking.via),
+      destinationLocation: booking.dropoffTo,
+      travelDateLabel: this.formatTravelDateLabel(booking.preferredPickupAt),
     });
   }
 

@@ -26,8 +26,8 @@ export class WhatsappMessagingService {
   async sendBookingConfirmationTemplate(
     input: Omit<
       BookingConfirmationTemplateInput,
-      'templateName' | 'languageCode' | 'businessName'
-    > & { businessName?: string },
+      'templateName' | 'languageCode'
+    >,
   ): Promise<WhatsappSendResult> {
     const config = getWhatsappConfig();
     if (!config?.enabled) {
@@ -39,7 +39,6 @@ export class WhatsappMessagingService {
 
     const payload = buildBookingConfirmationTemplateRequest({
       ...input,
-      businessName: input.businessName ?? config.businessName,
       templateName: config.bookingConfirmationTemplate,
       languageCode: config.templateLanguageCode,
     });
