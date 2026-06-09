@@ -93,7 +93,7 @@ export class WhatsappController {
   @UseGuards(StaffAdminGuard)
   @ApiAccessTokenInSwagger()
   @ApiOperation({
-    summary: 'Send custom_vale_booking template (admin test)',
+    summary: 'Send vale_executive_template (admin test)',
     description:
       'Sends via FACEBOOK_GRAPH_API. Recipient `to` is always WHATSAPP_TO (owner). Customer fields are template body parameters only.',
   })
@@ -119,8 +119,12 @@ export class WhatsappController {
       email: dto.email,
       departureLocation: dto.departureLocation,
       stopoverLocation: dto.stopoverLocation ?? 'None',
+      roomNo: dto.roomNo?.trim() || 'None',
+      passengers: dto.passengers?.trim() || '1',
       destinationLocation: dto.destinationLocation,
       travelDateLabel: dto.travelDateLabel,
+      selectedService: dto.selectedService,
+      totalFare: dto.totalFare,
     });
   }
 
@@ -128,7 +132,7 @@ export class WhatsappController {
   @UseGuards(StaffAdminGuard)
   @ApiAccessTokenInSwagger()
   @ApiOperation({
-    summary: 'Send custom_vale_booking for an existing booking (admin)',
+    summary: 'Send vale_executive_template for an existing booking (admin)',
     description:
       'WhatsApp `to` is always WHATSAPP_TO (owner). Booking customer contactNumber is stored on the booking only.',
   })

@@ -36,6 +36,7 @@ export const API_MESSAGES = {
   routing: {
     quoteSuccess: 'Route quote calculated successfully.',
     fareSuccess: 'Fare calculated successfully.',
+    placesSuccess: 'Places loaded successfully.',
     geocodeFailed: 'We could not find one of the addresses. Please check and try again.',
     routeFailed: 'We could not calculate a driving route for this journey.',
   },

@@ -36,6 +36,7 @@ model Booking {
   contactNumber    String        @map("contact_number")
   pickupFrom       String        @map("pickup_from")
   roomNo           String?       @map("room_no")
+  passengers       Int?          @map("passengers")
   dropoffTo        String        @map("dropoff_to")
   distanceMiles    Int           @map("distance_miles")
   estimatedFare    Int           @map("estimated_fare")

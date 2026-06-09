@@ -43,6 +43,12 @@ export class UpdateBookingDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  passengers?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   @MinLength(1)
   to?: string;
