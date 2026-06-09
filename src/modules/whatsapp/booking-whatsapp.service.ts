@@ -1,5 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Booking } from '@prisma/client';
+import {
+  isVehicleType,
+  PRICING,
+} from '../../common/pricing/pricing';
 import { PrismaService } from '../../core/database/prisma.service';
 import { getWhatsappConfig } from './whatsapp.config';
 import { resolveOwnerWhatsappTo } from './utils/phone.util';
@@ -42,6 +46,26 @@ export class BookingWhatsappService {
     return trimmed;
   }
 
+  private formatRoomNo(roomNo: string | null | undefined): string {
+    const trimmed = roomNo?.trim();
+    return trimmed ? trimmed : 'None';
+  }
+
+  private formatPassengers(passengers: number | null | undefined): string {
+    return String(passengers ?? 1);
+  }
+
+  private formatSelectedService(vehicleType: string): string {
+    if (isVehicleType(vehicleType)) {
+      return PRICING[vehicleType].label;
+    }
+    return vehicleType.trim().toUpperCase() || 'EXECUTIVE';
+  }
+
+  private formatTotalFare(estimatedFare: number): string {
+    return `£${estimatedFare}`;
+  }
+
   async sendBookingConfirmation(booking: Booking): Promise<WhatsappSendResult> {
     const config = getWhatsappConfig();
     if (!config?.enabled) {
@@ -74,8 +98,12 @@ export class BookingWhatsappService {
       email: booking.email,
       departureLocation: booking.pickupFrom,
       stopoverLocation: this.formatStopoverLocation(booking.via),
+      roomNo: this.formatRoomNo(booking.roomNo),
+      passengers: this.formatPassengers(booking.passengers),
       destinationLocation: booking.dropoffTo,
       travelDateLabel: this.formatTravelDateLabel(booking.preferredPickupAt),
+      selectedService: this.formatSelectedService(booking.vehicleType),
+      totalFare: this.formatTotalFare(booking.estimatedFare),
     });
   }
 

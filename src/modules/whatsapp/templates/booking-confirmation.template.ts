@@ -8,9 +8,9 @@ import {
 } from '../utils/template-parameter.util';
 
 /**
- * Meta template: custom_vale_booking
+ * Meta template: vale_executive_template
  *
- * A new customer inquiry has been received.
+ * A new customer booking has been received.
  *
  * Customer Information:
  * • Name: {{1}}
@@ -20,8 +20,15 @@ import {
  * Journey Information:
  * • Departure Location: {{4}}
  * • Stopover Location: {{5}}
- * • Destination Location: {{6}}
- * • Travel Date: {{7}}
+ * • Room No. : {{6}}
+ * • Passengers: {{7}}
+ * • Destination Location: {{8}}
+ * • Travel Date: {{9}}
+ *
+ * Selected Service:
+ * {{10}}
+ *
+ * Total Far: {{11}}
  */
 export type BookingConfirmationTemplateInput = {
   to: string;
@@ -30,8 +37,12 @@ export type BookingConfirmationTemplateInput = {
   email: string;
   departureLocation: string;
   stopoverLocation: string;
+  roomNo: string;
+  passengers: string;
   destinationLocation: string;
   travelDateLabel: string;
+  selectedService: string;
+  totalFare: string;
   templateName: string;
   languageCode: string;
 };
@@ -68,11 +79,27 @@ export function buildBookingConfirmationBodyComponent(
       },
       {
         type: 'text',
+        text: sanitizeTemplateParameter(input.roomNo, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.passengers, maxLength),
+      },
+      {
+        type: 'text',
         text: sanitizeTemplateParameter(input.destinationLocation, maxLength),
       },
       {
         type: 'text',
         text: sanitizeTemplateParameter(input.travelDateLabel, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.selectedService, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.totalFare, maxLength),
       },
     ],
   };
@@ -95,8 +122,12 @@ export function buildBookingConfirmationTemplateRequest(
           email: input.email,
           departureLocation: input.departureLocation,
           stopoverLocation: input.stopoverLocation,
+          roomNo: input.roomNo,
+          passengers: input.passengers,
           destinationLocation: input.destinationLocation,
           travelDateLabel: input.travelDateLabel,
+          selectedService: input.selectedService,
+          totalFare: input.totalFare,
         }),
       ],
     },

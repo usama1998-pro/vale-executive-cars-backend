@@ -31,6 +31,16 @@ export class SendBookingConfirmationDto {
   @IsString()
   stopoverLocation?: string;
 
+  @ApiPropertyOptional({ example: '214' })
+  @IsOptional()
+  @IsString()
+  roomNo?: string;
+
+  @ApiPropertyOptional({ example: '2' })
+  @IsOptional()
+  @IsString()
+  passengers?: string;
+
   @ApiProperty({ example: 'Central London' })
   @IsString()
   @MinLength(1)
@@ -40,6 +50,16 @@ export class SendBookingConfirmationDto {
   @IsString()
   @MinLength(1)
   travelDateLabel!: string;
+
+  @ApiProperty({ example: 'EXECUTIVE' })
+  @IsString()
+  @MinLength(1)
+  selectedService!: string;
+
+  @ApiProperty({ example: '£75' })
+  @IsString()
+  @MinLength(1)
+  totalFare!: string;
 }
 
 export class TestBookingConfirmationFromBookingDto {

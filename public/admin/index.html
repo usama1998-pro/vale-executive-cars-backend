@@ -910,6 +910,10 @@
               <input id="editFrom" type="text" required />
             </div>
             <div class="field-inline">
+              <label for="editPassengers">Passengers</label>
+              <input id="editPassengers" type="number" min="1" step="1" placeholder="1" />
+            </div>
+            <div class="field-inline">
               <label for="editRoomNo">Room no.</label>
               <input id="editRoomNo" type="text" placeholder="Optional" />
             </div>
@@ -1326,6 +1330,8 @@
         document.getElementById('editContactNumber').value = booking.contactNumber || '';
         document.getElementById('editStatus').value = booking.status || 'pending';
         document.getElementById('editFrom').value = booking.from || '';
+        document.getElementById('editPassengers').value =
+          booking.passengers != null ? String(booking.passengers) : '1';
         document.getElementById('editRoomNo').value = booking.roomNo || '';
         document.getElementById('editTo').value = booking.to || '';
         document.getElementById('editVia').value = booking.via || '';
@@ -1345,6 +1351,7 @@
           contactNumber: document.getElementById('editContactNumber').value.trim(),
           status: document.getElementById('editStatus').value,
           from: document.getElementById('editFrom').value.trim(),
+          passengers: parseInt(document.getElementById('editPassengers').value, 10) || 1,
           roomNo: document.getElementById('editRoomNo').value.trim(),
           to: document.getElementById('editTo').value.trim(),
           via: document.getElementById('editVia').value.trim(),

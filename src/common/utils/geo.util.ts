@@ -21,10 +21,7 @@ export function haversineMiles(
   return EARTH_RADIUS_MILES * c;
 }
 
-/**
- * When OSRM returns a route close to straight-line distance, road data is often
- * incomplete. Estimate driving distance as crow-flies × road factor (miles).
- */
+/** Estimate driving distance as crow-flies × road factor (miles). */
 export function estimateDrivingMiles(
   from: { latitude: number; longitude: number },
   to: { latitude: number; longitude: number },

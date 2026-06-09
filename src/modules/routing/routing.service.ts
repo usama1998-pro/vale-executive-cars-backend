@@ -1,23 +1,18 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   calculateAllFares,
   calculateAllFaresFromMeters,
   calculateFare,
   kmFromRoundedMiles,
-  metersToMiles,
   roundMiles,
   type VehicleType,
 } from '../../common/pricing/pricing';
-import { estimateDrivingMiles, haversineMiles } from '../../common/utils/geo.util';
-import { getRoutingConfig } from './routing.config';
-import { OsrmApiClient } from './clients/osrm-api.client';
-import { NominatimApiClient } from './clients/nominatim-api.client';
+import { API_MESSAGES } from '../../common/messages/api-messages';
+import { GoogleDirectionsApiClient } from './clients/google-directions-api.client';
+import { GoogleGeocodingApiClient } from './clients/google-geocoding-api.client';
+import { GooglePlacesApiClient } from './clients/google-places-api.client';
 import type { RouteFareDto, RouteQuoteDto } from './dto/route-quote.dto';
-import type { GeocodedLocation } from './types/nominatim.types';
+import type { GeocodedLocation } from './types/google-maps.types';
 
 type ResolvedWaypoint = {
   input: string;
@@ -43,8 +38,9 @@ export class RoutingService {
   private readonly logger = new Logger(RoutingService.name);
 
   constructor(
-    private readonly nominatim: NominatimApiClient,
-    private readonly osrm: OsrmApiClient,
+    private readonly geocoding: GoogleGeocodingApiClient,
+    private readonly directions: GoogleDirectionsApiClient,
+    private readonly places: GooglePlacesApiClient,
   ) {}
 
   async getQuote(dto: RouteQuoteDto): Promise<RouteQuoteResult> {
@@ -55,29 +51,25 @@ export class RoutingService {
       { label: 'drop-off', input: dto.to },
     ]);
 
-    const route = await this.getDrivingRouteSafe(
-      waypoints.map(({ location }) => ({
-        latitude: location.latitude,
-        longitude: location.longitude,
-      })),
-    );
+    const route = viaInput
+      ? await this.getViaRouteTotals(waypoints)
+      : await this.getDrivingRouteSafe(
+          waypoints.map(({ location }) => ({
+            latitude: location.latitude,
+            longitude: location.longitude,
+          })),
+        );
 
-    const resolvedMeters = this.resolveDistanceMeters(
-      route.distanceMeters,
-      waypoints[0].location,
-      waypoints[waypoints.length - 1].location,
-    );
-
-    const distanceMiles = roundMiles(resolvedMeters);
+    const distanceMiles = roundMiles(route.distanceMeters);
     const distanceKm = kmFromRoundedMiles(distanceMiles);
     const durationMinutes = Math.round(route.durationSeconds / 60);
-    const fares = calculateAllFaresFromMeters(resolvedMeters);
+    const fares = calculateAllFaresFromMeters(route.distanceMeters);
 
     return {
       from: waypoints[0].location,
       to: waypoints[waypoints.length - 1].location,
       via: viaInput ? waypoints[1].location : undefined,
-      distanceMeters: resolvedMeters,
+      distanceMeters: route.distanceMeters,
       distanceMiles,
       distanceKm,
       durationSeconds: route.durationSeconds,
@@ -102,6 +94,43 @@ export class RoutingService {
     };
   }
 
+  searchPlaces(input: string) {
+    return this.places.searchPlaces(input);
+  }
+
+  /**
+   * Via journeys: sum Pickup→Via and Via→Drop-off distances, then price once
+   * on the combined total miles.
+   */
+  private async getViaRouteTotals(waypoints: ResolvedWaypoint[]) {
+    const pickup = waypoints[0].location;
+    const via = waypoints[1].location;
+    const dropoff = waypoints[waypoints.length - 1].location;
+
+    const toCoordinate = (location: GeocodedLocation) => ({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+
+    const [pickupToVia, viaToDropoff] = await Promise.all([
+      this.getDrivingRouteSafe([toCoordinate(pickup), toCoordinate(via)]),
+      this.getDrivingRouteSafe([toCoordinate(via), toCoordinate(dropoff)]),
+    ]);
+
+    const distanceMeters =
+      pickupToVia.distanceMeters + viaToDropoff.distanceMeters;
+
+    this.logger.debug(
+      `Via route: pickup→via ${roundMiles(pickupToVia.distanceMeters)} mi + via→drop-off ${roundMiles(viaToDropoff.distanceMeters)} mi = ${roundMiles(distanceMeters)} mi total`,
+    );
+
+    return {
+      distanceMeters,
+      durationSeconds:
+        pickupToVia.durationSeconds + viaToDropoff.durationSeconds,
+    };
+  }
+
   private normalizeVia(via?: string): string | undefined {
     const trimmed = via?.trim();
     if (!trimmed || trimmed.toLowerCase() === 'car') {
@@ -117,7 +146,7 @@ export class RoutingService {
 
     for (const point of points) {
       try {
-        const location = await this.nominatim.geocodeAddress(point.input);
+        const location = await this.geocoding.geocodeAddress(point.input);
         resolved.push({ input: point.input, location });
       } catch (error) {
         const detail =
@@ -132,47 +161,16 @@ export class RoutingService {
     return resolved;
   }
 
-  /**
-   * Public OSRM often lacks full road networks outside Europe. When the routed
-   * distance is barely longer than straight-line, use crow-flies × road factor.
-   */
-  private resolveDistanceMeters(
-    osrmMeters: number,
-    from: GeocodedLocation,
-    to: GeocodedLocation,
-  ): number {
-    const config = getRoutingConfig();
-    const straightMiles = haversineMiles(from, to);
-    const osrmMiles = metersToMiles(osrmMeters);
-
-    if (straightMiles <= 0) {
-      return osrmMeters;
-    }
-
-    const osrmLooksIncomplete = osrmMiles <= straightMiles * 1.12;
-    if (!osrmLooksIncomplete) {
-      return osrmMeters;
-    }
-
-    const estimatedMiles = estimateDrivingMiles(from, to, config.roadFactor);
-    this.logger.debug(
-      `OSRM ${osrmMiles.toFixed(1)} mi ≈ straight line; using estimated ${estimatedMiles.toFixed(1)} mi (×${config.roadFactor})`,
-    );
-    return estimatedMiles * 1609.344;
-  }
-
   private async getDrivingRouteSafe(
     coordinates: Array<{ latitude: number; longitude: number }>,
   ) {
     try {
-      return await this.osrm.getDrivingRoute(coordinates);
+      return await this.directions.getDrivingRoute(coordinates);
     } catch (error) {
       const detail =
         error instanceof Error ? error.message : 'Routing request failed';
-      this.logger.warn(`OSRM routing failed: ${detail}`);
-      throw new BadRequestException(
-        'We could not calculate a driving route for this journey. Please check the addresses and try again.',
-      );
+      this.logger.warn(`Google Directions routing failed: ${detail}`);
+      throw new BadRequestException(API_MESSAGES.routing.routeFailed);
     }
   }
 }

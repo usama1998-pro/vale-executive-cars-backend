@@ -1,8 +1,9 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { getRoutingConfig } from './routing.config';
-import { NominatimApiClient } from './clients/nominatim-api.client';
-import { OsrmApiClient } from './clients/osrm-api.client';
+import { GoogleDirectionsApiClient } from './clients/google-directions-api.client';
+import { GoogleGeocodingApiClient } from './clients/google-geocoding-api.client';
+import { GooglePlacesApiClient } from './clients/google-places-api.client';
 import { RoutingController } from './routing.controller';
 import { RoutingService } from './routing.service';
 
@@ -19,7 +20,17 @@ import { RoutingService } from './routing.service';
     }),
   ],
   controllers: [RoutingController],
-  providers: [NominatimApiClient, OsrmApiClient, RoutingService],
-  exports: [RoutingService, OsrmApiClient, NominatimApiClient],
+  providers: [
+    GoogleGeocodingApiClient,
+    GoogleDirectionsApiClient,
+    GooglePlacesApiClient,
+    RoutingService,
+  ],
+  exports: [
+    RoutingService,
+    GoogleGeocodingApiClient,
+    GoogleDirectionsApiClient,
+    GooglePlacesApiClient,
+  ],
 })
 export class RoutingModule {}

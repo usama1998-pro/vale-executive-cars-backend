@@ -1,46 +1,35 @@
 export type RoutingConfig = {
-  osrmBaseUrl: string;
-  nominatimBaseUrl: string;
-  /** ISO country filter for Nominatim (comma-separated), e.g. `gb,pk`. */
-  nominatimCountryCodes: string;
-  /** Multiplier applied to straight-line miles when OSRM road data looks incomplete. */
-  roadFactor: number;
-  userAgent: string;
+  googleMapsApiKey: string;
+  /** ISO country codes for Places/Geocoding filters, e.g. `['gb', 'pk']`. */
+  countryCodes: string[];
+  /** Region bias for Google APIs (e.g. `uk`). */
+  region: string;
   requestTimeoutMs: number;
 };
 
 export function getRoutingConfig(): RoutingConfig {
-  const osrmBaseUrl = (
-    process.env.OPENSTREET_MAP_URL?.trim() ||
-    'https://router.project-osrm.org/route/v1/driving'
-  ).replace(/\/$/, '');
+  const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY?.trim() ?? '';
+  if (!googleMapsApiKey) {
+    throw new Error('GOOGLE_MAPS_API_KEY is required');
+  }
 
-  const nominatimBaseUrl = (
-    process.env.NOMINATIM_URL?.trim() ||
-    'https://nominatim.openstreetmap.org'
-  ).replace(/\/$/, '');
+  const countryCodesRaw =
+    process.env.GOOGLE_MAPS_COUNTRY_CODES?.trim() || 'gb,pk';
+  const countryCodes = countryCodesRaw
+    .split(',')
+    .map((code) => code.trim().toLowerCase())
+    .filter(Boolean);
 
-  const nominatimCountryCodes =
-    process.env.NOMINATIM_COUNTRY_CODES?.trim() || 'gb,pk';
-
-  const roadFactorRaw = Number(process.env.ROUTING_ROAD_FACTOR ?? 1.4);
-  const roadFactor =
-    Number.isFinite(roadFactorRaw) && roadFactorRaw >= 1 ? roadFactorRaw : 1.4;
-
-  const userAgent =
-    process.env.ROUTING_USER_AGENT?.trim() ||
-    'ValeExecutivesCars/1.0 (booking quote service)';
+  const region = process.env.GOOGLE_MAPS_REGION?.trim() || 'uk';
 
   const timeoutRaw = Number(process.env.ROUTING_TIMEOUT_MS ?? 30_000);
   const requestTimeoutMs =
     Number.isFinite(timeoutRaw) && timeoutRaw > 0 ? timeoutRaw : 30_000;
 
   return {
-    osrmBaseUrl,
-    nominatimBaseUrl,
-    nominatimCountryCodes,
-    roadFactor,
-    userAgent,
+    googleMapsApiKey,
+    countryCodes: countryCodes.length > 0 ? countryCodes : ['gb', 'pk'],
+    region,
     requestTimeoutMs,
   };
 }

@@ -47,6 +47,12 @@ export class CreateBookingDto {
   @IsString()
   roomNo?: string;
 
+  @ApiPropertyOptional({ example: 2, default: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  passengers?: number;
+
   @ApiProperty({ example: 'bermingham' })
   @IsString()
   @MinLength(1)
