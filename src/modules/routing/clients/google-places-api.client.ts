@@ -29,13 +29,14 @@ export class GooglePlacesApiClient {
       .map((code) => `country:${code}`)
       .join('|');
 
+    // Omit `types` so results include addresses and named places (pubs, restaurants).
     const { data } = await firstValueFrom(
       this.http.get<GooglePlacesAutocompleteResponse>(url, {
         params: {
           input: query,
           key: config.googleMapsApiKey,
           components,
-          types: 'geocode',
+          region: config.region,
         },
       }),
     );
