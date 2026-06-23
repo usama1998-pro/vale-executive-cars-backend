@@ -325,7 +325,8 @@ export class BookingsService {
       }
     }
     if (dto.returnPickupAt !== undefined) {
-      data.returnPickupAt = new Date(dto.returnPickupAt);
+      data.returnPickupAt =
+        dto.returnPickupAt === null ? null : new Date(dto.returnPickupAt);
     }
     if (dto.status !== undefined) {
       data.status = dto.status;

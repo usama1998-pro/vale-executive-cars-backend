@@ -1100,6 +1100,26 @@
                 </div>
               </div>
             </div>
+            <div class="field-inline">
+              <label for="editTripType">Trip type</label>
+              <select id="editTripType">
+                <option value="one-way">One way</option>
+                <option value="return">Return</option>
+              </select>
+            </div>
+            <div class="field-inline pickup-datetime" id="editReturnPickupWrap" style="display: none">
+              <label for="editReturnPickupDate">Return pickup (optional)</label>
+              <div class="pickup-datetime__row">
+                <div class="pickup-datetime__field">
+                  <label for="editReturnPickupDate">Date</label>
+                  <input id="editReturnPickupDate" type="date" />
+                </div>
+                <div class="pickup-datetime__field">
+                  <label for="editReturnPickupTime">Time</label>
+                  <input id="editReturnPickupTime" type="time" />
+                </div>
+              </div>
+            </div>
           </form>
           <p id="bookingModalError" class="error hidden" role="alert"></p>
         </div>
@@ -1507,6 +1527,12 @@
         return d.toISOString();
       }
 
+      function syncTripTypeFields() {
+        const tripType = document.getElementById('editTripType').value;
+        const wrap = document.getElementById('editReturnPickupWrap');
+        wrap.style.display = tripType === 'return' ? '' : 'none';
+      }
+
       function closeBookingModal() {
         activeBookingId = null;
         activeBookingRef = '';
@@ -1562,6 +1588,15 @@
           isoToDateInput(booking.preferredPickupAt);
         document.getElementById('editPreferredPickupTime').value =
           isoToTimeInput(booking.preferredPickupAt);
+        document.getElementById('editTripType').value =
+          booking.tripType === 'return' ? 'return' : 'one-way';
+        document.getElementById('editReturnPickupDate').value = isoToDateInput(
+          booking.returnPickupAt,
+        );
+        document.getElementById('editReturnPickupTime').value = isoToTimeInput(
+          booking.returnPickupAt,
+        );
+        syncTripTypeFields();
       }
 
       function readBookingEditPayload() {
@@ -1569,7 +1604,12 @@
           document.getElementById('editPreferredPickupDate').value,
           document.getElementById('editPreferredPickupTime').value,
         );
-        return {
+        const tripType = document.getElementById('editTripType').value;
+        const returnPickup = dateTimeInputsToIso(
+          document.getElementById('editReturnPickupDate').value,
+          document.getElementById('editReturnPickupTime').value,
+        );
+        const payload = {
           customerName: document
             .getElementById('editCustomerName')
             .value.trim(),
@@ -1592,7 +1632,16 @@
             document.getElementById('editEstimatedFare').value,
           ),
           preferredPickupAt: pickup,
+          tripType,
         };
+
+        if (tripType === 'return') {
+          payload.returnPickupAt = returnPickup ?? null;
+        } else {
+          payload.returnPickupAt = null;
+        }
+
+        return payload;
       }
 
       async function openBookingModal(id) {
@@ -2192,6 +2241,9 @@
       document
         .getElementById('deleteConfirmOk')
         .addEventListener('click', executeDeleteBooking);
+      document
+        .getElementById('editTripType')
+        .addEventListener('change', syncTripTypeFields);
       document
         .getElementById('bookingEditForm')
         .addEventListener('submit', (e) => {

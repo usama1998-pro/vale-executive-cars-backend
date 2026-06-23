@@ -11,6 +11,7 @@ import {
   IsString,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateBookingDto {
@@ -88,10 +89,11 @@ export class UpdateBookingDto {
   @IsIn(['one-way', 'return'])
   tripType?: 'one-way' | 'return';
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ nullable: true })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsDateString()
-  returnPickupAt?: string;
+  returnPickupAt?: string | null;
 
   @ApiPropertyOptional({ enum: BookingStatus })
   @IsOptional()
