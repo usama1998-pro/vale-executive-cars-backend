@@ -108,6 +108,84 @@
         border-color: var(--gold);
         box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
       }
+      input[type='date'],
+      input[type='time'],
+      input[type='datetime-local'] {
+        color-scheme: dark;
+        min-height: 2.85rem;
+        padding: 0.75rem 0.85rem;
+        font-size: 1.05rem;
+        background: var(--bg);
+        color: var(--gold);
+        accent-color: var(--gold);
+        border-color: var(--gold-dim);
+      }
+      input[type='date']::-webkit-calendar-picker-indicator,
+      input[type='time']::-webkit-calendar-picker-indicator,
+      input[type='datetime-local']::-webkit-calendar-picker-indicator {
+        filter: invert(72%) sepia(42%) saturate(650%) hue-rotate(7deg) brightness(95%);
+        cursor: pointer;
+        opacity: 1;
+        width: 1.35rem;
+        height: 1.35rem;
+      }
+      .pickup-datetime {
+        grid-column: 1 / -1;
+      }
+      .pickup-datetime > label {
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+      .pickup-datetime__row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-top: 0.35rem;
+      }
+      .pickup-datetime__field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .pickup-datetime__field label {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--muted);
+        text-transform: none;
+        letter-spacing: normal;
+        margin-bottom: 0;
+      }
+      .pickup-datetime__field input {
+        min-height: 3.1rem;
+        font-size: 1.05rem;
+        border-color: var(--gold-dim);
+        background: var(--bg);
+        color: var(--gold);
+        accent-color: var(--gold);
+      }
+      .pickup-datetime__field input:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+      }
+      .pickup-datetime__field input::-webkit-datetime-edit,
+      .pickup-datetime__field input::-webkit-datetime-edit-fields-wrapper,
+      .pickup-datetime__field input::-webkit-datetime-edit-text,
+      .pickup-datetime__field input::-webkit-datetime-edit-month-field,
+      .pickup-datetime__field input::-webkit-datetime-edit-day-field,
+      .pickup-datetime__field input::-webkit-datetime-edit-year-field,
+      .pickup-datetime__field input::-webkit-datetime-edit-hour-field,
+      .pickup-datetime__field input::-webkit-datetime-edit-minute-field,
+      .pickup-datetime__field input::-webkit-datetime-edit-ampm-field {
+        color: var(--gold);
+      }
+      @media (max-width: 520px) {
+        .pickup-datetime__row {
+          grid-template-columns: 1fr;
+        }
+      }
       .attempts {
         margin: 0 0 1rem;
         font-size: 0.85rem;
@@ -321,6 +399,11 @@
         width: 100%;
         padding: 0.55rem 0.65rem;
         font-size: 0.9rem;
+      }
+      .filters .field-inline input[type='date'] {
+        min-height: 2.65rem;
+        padding: 0.65rem 0.75rem;
+        font-size: 0.95rem;
       }
       .filters-actions {
         display: flex;
@@ -931,15 +1014,24 @@
             </div>
             <div class="field-inline">
               <label for="editDistanceMiles">Distance (miles)</label>
-              <input id="editDistanceMiles" type="number" min="0" step="1" required />
+              <input id="editDistanceMiles" type="number" min="0" step="0.01" required />
             </div>
             <div class="field-inline">
               <label for="editEstimatedFare">Fare (£)</label>
-              <input id="editEstimatedFare" type="number" min="0" step="1" required />
+              <input id="editEstimatedFare" type="number" min="0" step="0.01" required />
             </div>
-            <div class="field-inline" style="grid-column: 1 / -1">
-              <label for="editPreferredPickupAt">Preferred pickup</label>
-              <input id="editPreferredPickupAt" type="datetime-local" required />
+            <div class="field-inline pickup-datetime">
+              <label for="editPreferredPickupDate">Preferred pickup</label>
+              <div class="pickup-datetime__row">
+                <div class="pickup-datetime__field">
+                  <label for="editPreferredPickupDate">Date</label>
+                  <input id="editPreferredPickupDate" type="date" required />
+                </div>
+                <div class="pickup-datetime__field">
+                  <label for="editPreferredPickupTime">Time</label>
+                  <input id="editPreferredPickupTime" type="time" required />
+                </div>
+              </div>
             </div>
           </form>
           <p id="bookingModalError" class="error hidden" role="alert"></p>
@@ -1161,7 +1253,7 @@
             ' → ' +
             escapeHtml(b.to) +
             '</td><td data-label="Fare">£' +
-            escapeHtml(b.estimatedFare) +
+            escapeHtml(Number(b.estimatedFare).toFixed(2)) +
             '</td><td data-label="Status"><span class="badge--status">' +
             escapeHtml(b.status) +
             '</span></td><td data-label="Submitted">' +
@@ -1295,6 +1387,29 @@
         );
       }
 
+      function isoToDateInput(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      }
+
+      function isoToTimeInput(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return pad(d.getHours()) + ':' + pad(d.getMinutes());
+      }
+
+      function dateTimeInputsToIso(dateVal, timeVal) {
+        if (!dateVal || !timeVal) return undefined;
+        const d = new Date(dateVal + 'T' + timeVal);
+        if (Number.isNaN(d.getTime())) return undefined;
+        return d.toISOString();
+      }
+
       function closeBookingModal() {
         activeBookingId = null;
         activeBookingRef = '';
@@ -1338,13 +1453,19 @@
         document.getElementById('editVehicleType').value = booking.vehicleType || '';
         document.getElementById('editDistanceMiles').value = String(booking.distanceMiles ?? '');
         document.getElementById('editEstimatedFare').value = String(booking.estimatedFare ?? '');
-        document.getElementById('editPreferredPickupAt').value = isoToDatetimeLocal(
+        document.getElementById('editPreferredPickupDate').value = isoToDateInput(
+          booking.preferredPickupAt,
+        );
+        document.getElementById('editPreferredPickupTime').value = isoToTimeInput(
           booking.preferredPickupAt,
         );
       }
 
       function readBookingEditPayload() {
-        const pickup = document.getElementById('editPreferredPickupAt').value;
+        const pickup = dateTimeInputsToIso(
+          document.getElementById('editPreferredPickupDate').value,
+          document.getElementById('editPreferredPickupTime').value,
+        );
         return {
           customerName: document.getElementById('editCustomerName').value.trim(),
           email: document.getElementById('editEmail').value.trim(),
@@ -1358,7 +1479,7 @@
           vehicleType: document.getElementById('editVehicleType').value.trim(),
           distanceMiles: Number(document.getElementById('editDistanceMiles').value),
           estimatedFare: Number(document.getElementById('editEstimatedFare').value),
-          preferredPickupAt: pickup ? new Date(pickup).toISOString() : undefined,
+          preferredPickupAt: pickup,
         };
       }
 

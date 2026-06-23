@@ -39,8 +39,10 @@ export type BookingResponse = {
   distanceMiles: number;
   estimatedFare: number;
   vehicleType: string;
+  tripType: 'one-way' | 'return';
   via: string;
   preferredPickupAt: string;
+  returnPickupAt: string | null;
   status: BookingStatus;
   submittedAt: string;
   resolvedAt: string | null;
@@ -94,6 +96,15 @@ export class BookingsService {
     );
   }
 
+  private normalizeTripType(raw?: string): 'one-way' | 'return' {
+    if (!raw) return 'one-way';
+    const value = raw.trim().toLowerCase();
+    if (value === 'one-way' || value === 'return') {
+      return value;
+    }
+    throw new BadRequestException('tripType must be either "one-way" or "return"');
+  }
+
   private toResponse(row: Booking): BookingResponse {
     return {
       id: row.id,
@@ -109,8 +120,10 @@ export class BookingsService {
       distanceMiles: row.distanceMiles,
       estimatedFare: row.estimatedFare,
       vehicleType: row.vehicleType,
+      tripType: this.normalizeTripType(row.tripType),
       via: row.via,
       preferredPickupAt: row.preferredPickupAt.toISOString(),
+      returnPickupAt: row.returnPickupAt?.toISOString() ?? null,
       status: row.status,
       submittedAt: row.submittedAt.toISOString(),
       resolvedAt: row.resolvedAt?.toISOString() ?? null,
@@ -133,6 +146,13 @@ export class BookingsService {
         ? new Date()
         : null;
 
+    const tripType = this.normalizeTripType(dto.tripType);
+    if (tripType === 'return' && !dto.returnPickupAt) {
+      throw new BadRequestException(
+        'returnPickupAt is required when tripType is "return"',
+      );
+    }
+
     try {
       const row = await this.prisma.booking.create({
         data: {
@@ -147,8 +167,10 @@ export class BookingsService {
           distanceMiles: dto.distanceMiles,
           estimatedFare: dto.estimatedFare,
           vehicleType: dto.vehicleType.trim(),
+          tripType,
           via: dto.via.trim(),
           preferredPickupAt: new Date(dto.preferredPickupAt),
+          returnPickupAt: dto.returnPickupAt ? new Date(dto.returnPickupAt) : null,
           status,
           submittedAt,
           resolvedAt,
@@ -299,6 +321,16 @@ export class BookingsService {
     }
     if (dto.preferredPickupAt !== undefined) {
       data.preferredPickupAt = new Date(dto.preferredPickupAt);
+    }
+    if (dto.tripType !== undefined) {
+      const tripType = this.normalizeTripType(dto.tripType);
+      data.tripType = tripType;
+      if (tripType === 'one-way' && dto.returnPickupAt === undefined) {
+        data.returnPickupAt = null;
+      }
+    }
+    if (dto.returnPickupAt !== undefined) {
+      data.returnPickupAt = new Date(dto.returnPickupAt);
     }
     if (dto.status !== undefined) {
       data.status = dto.status;

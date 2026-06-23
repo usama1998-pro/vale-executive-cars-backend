@@ -3,8 +3,8 @@ import {
   calculateAllFares,
   calculateAllFaresFromMeters,
   calculateFare,
-  kmFromRoundedMiles,
-  roundMiles,
+  kmFromMiles,
+  milesFromMeters,
   type VehicleType,
 } from '../../common/pricing/pricing';
 import { API_MESSAGES } from '../../common/messages/api-messages';
@@ -60,8 +60,8 @@ export class RoutingService {
           })),
         );
 
-    const distanceMiles = roundMiles(route.distanceMeters);
-    const distanceKm = kmFromRoundedMiles(distanceMiles);
+    const distanceMiles = milesFromMeters(route.distanceMeters);
+    const distanceKm = kmFromMiles(distanceMiles);
     const durationMinutes = Math.round(route.durationSeconds / 60);
     const fares = calculateAllFaresFromMeters(route.distanceMeters);
 
@@ -81,8 +81,8 @@ export class RoutingService {
   }
 
   getFare(dto: RouteFareDto) {
-    const distanceMiles = Math.round(Math.max(0, dto.distanceMiles));
-    const distanceKm = kmFromRoundedMiles(distanceMiles);
+    const distanceMiles = Math.max(0, dto.distanceMiles);
+    const distanceKm = kmFromMiles(distanceMiles);
     const estimatedFare = calculateFare(distanceMiles, dto.vehicleType);
 
     return {
@@ -121,7 +121,7 @@ export class RoutingService {
       pickupToVia.distanceMeters + viaToDropoff.distanceMeters;
 
     this.logger.debug(
-      `Via route: pickup→via ${roundMiles(pickupToVia.distanceMeters)} mi + via→drop-off ${roundMiles(viaToDropoff.distanceMeters)} mi = ${roundMiles(distanceMeters)} mi total`,
+      `Via route: pickup→via ${milesFromMeters(pickupToVia.distanceMeters)} mi + via→drop-off ${milesFromMeters(viaToDropoff.distanceMeters)} mi = ${milesFromMeters(distanceMeters)} mi total`,
     );
 
     return {

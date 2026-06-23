@@ -3,18 +3,20 @@ export type VehicleType = (typeof VEHICLE_TYPES)[number];
 
 export const PRICING = {
   saloon: {
-    label: 'SALOON',
+    label: 'PREMIUM VEHICLE',
     firstMiles: 3,
-    firstRate: 5,
+    firstRate: 7.5,
     additionalRate: 3,
   },
   executive: {
-    label: 'EXECUTIVE',
-    perMile: 5,
+    label: 'EXECUTIVE VEHICLE',
+    perMile: 7.5,
   },
   mpv: {
-    label: 'MPV (8 Seater)',
-    multiplier: 1.5,
+    label: 'EXECUTIVE MPV (7 Seater)',
+    firstMiles: 3,
+    firstRate: 10,
+    additionalRate: 7.5,
   },
 } as const;
 
@@ -39,27 +41,38 @@ export function calculateExecutiveFare(miles: number): number {
 }
 
 export function calculateMpvFare(miles: number): number {
-  return calculateExecutiveFare(miles) * PRICING.mpv.multiplier;
+  if (miles <= 0) return 0;
+  if (miles <= PRICING.mpv.firstMiles) {
+    return miles * PRICING.mpv.firstRate;
+  }
+  const firstLeg = PRICING.mpv.firstMiles * PRICING.mpv.firstRate;
+  const additional = (miles - PRICING.mpv.firstMiles) * PRICING.mpv.additionalRate;
+  return firstLeg + additional;
 }
 
-/** Whole pounds (bookings store `estimatedFare` as an integer). */
+/** Round a monetary amount to whole pence (2 decimal places). */
+export function roundToPence(amount: number): number {
+  return Math.round(amount * 100) / 100;
+}
+
+/** Fare in pounds to 2 decimal places (exact pence, priced on exact miles). */
 export function calculateFare(miles: number, vehicleType: VehicleType): number {
-  const roundedMiles = Math.max(0, miles);
+  const exactMiles = Math.max(0, miles);
   let fare = 0;
   switch (vehicleType) {
     case 'saloon':
-      fare = calculateSaloonFare(roundedMiles);
+      fare = calculateSaloonFare(exactMiles);
       break;
     case 'executive':
-      fare = calculateExecutiveFare(roundedMiles);
+      fare = calculateExecutiveFare(exactMiles);
       break;
     case 'mpv':
-      fare = calculateMpvFare(roundedMiles);
+      fare = calculateMpvFare(exactMiles);
       break;
     default:
       fare = 0;
   }
-  return Math.round(fare);
+  return roundToPence(fare);
 }
 
 export function calculateAllFares(miles: number): Record<VehicleType, number> {
@@ -78,18 +91,19 @@ export function metersToMiles(meters: number): number {
   return meters / 1609.344;
 }
 
-export function roundMiles(meters: number): number {
-  return Math.round(metersToMiles(meters));
+/** Exact journey miles to 2 decimal places (no whole-mile rounding). */
+export function milesFromMeters(meters: number): number {
+  return Math.round(metersToMiles(meters) * 100) / 100;
 }
 
-/** Approximate km equivalent for API consumers that still read distanceKm. */
-export function kmFromRoundedMiles(miles: number): number {
-  return Math.round(Math.max(0, miles) * 1.609344);
+/** Km equivalent (2 dp) for API consumers that still read distanceKm. */
+export function kmFromMiles(miles: number): number {
+  return Math.round(Math.max(0, miles) * 1.609344 * 100) / 100;
 }
 
-/** Fare uses mile-based rates. */
+/** Fare uses mile-based rates on exact mileage. */
 export function calculateAllFaresFromMeters(
   distanceMeters: number,
 ): Record<VehicleType, number> {
-  return calculateAllFares(roundMiles(distanceMeters));
+  return calculateAllFares(milesFromMeters(distanceMeters));
 }

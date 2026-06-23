@@ -63,7 +63,7 @@ export class BookingWhatsappService {
   }
 
   private formatTotalFare(estimatedFare: number): string {
-    return `£${estimatedFare}`;
+    return `£${estimatedFare.toFixed(2)}`;
   }
 
   async sendBookingConfirmation(booking: Booking): Promise<WhatsappSendResult> {

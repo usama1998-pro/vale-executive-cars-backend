@@ -1,9 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsIn,
   IsDateString,
   IsEmail,
   IsEnum,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -11,7 +13,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { BookingStatus } from '@prisma/client';
-import { RoundToInt } from '../../../common/transforms/round-to-int.transform';
 
 export class CreateBookingDto {
   @ApiPropertyOptional({
@@ -58,14 +59,13 @@ export class CreateBookingDto {
   @MinLength(1)
   to!: string;
 
-  @ApiProperty({ example: 80 })
-  @IsInt()
+  @ApiProperty({ example: 80.4, description: 'Journey distance in miles' })
+  @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   distanceMiles!: number;
 
-  @ApiProperty({ example: 400, description: 'Fare in whole pounds (rounded)' })
-  @RoundToInt()
-  @IsInt()
+  @ApiProperty({ example: 82.5, description: 'Fare in pounds (to the penny)' })
+  @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   estimatedFare!: number;
 
@@ -82,6 +82,16 @@ export class CreateBookingDto {
   @ApiProperty({ example: '2026-05-22T01:30:00.000Z' })
   @IsDateString()
   preferredPickupAt!: string;
+
+  @ApiPropertyOptional({ example: 'one-way', enum: ['one-way', 'return'] })
+  @IsOptional()
+  @IsIn(['one-way', 'return'])
+  tripType?: 'one-way' | 'return';
+
+  @ApiPropertyOptional({ example: '2026-05-24T16:30:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  returnPickupAt?: string;
 
   @ApiPropertyOptional({ enum: BookingStatus, default: BookingStatus.submitted })
   @IsOptional()
