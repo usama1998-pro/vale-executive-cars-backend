@@ -147,11 +147,6 @@ export class BookingsService {
         : null;
 
     const tripType = this.normalizeTripType(dto.tripType);
-    if (tripType === 'return' && !dto.returnPickupAt) {
-      throw new BadRequestException(
-        'returnPickupAt is required when tripType is "return"',
-      );
-    }
 
     try {
       const row = await this.prisma.booking.create({
