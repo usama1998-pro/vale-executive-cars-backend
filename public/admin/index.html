@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -25,7 +25,11 @@
         margin: 0;
         min-height: 100vh;
         min-height: 100dvh;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-family:
+          'Segoe UI',
+          system-ui,
+          -apple-system,
+          sans-serif;
         background: var(--bg);
         color: var(--text);
         line-height: 1.5;
@@ -42,7 +46,11 @@
         min-height: 100vh;
         min-height: 100dvh;
         padding: clamp(1rem, 4vw, 2.5rem);
-        background: radial-gradient(ellipse 120% 80% at 50% -20%, #243528 0%, var(--bg) 50%);
+        background: radial-gradient(
+          ellipse 120% 80% at 50% -20%,
+          #243528 0%,
+          var(--bg) 50%
+        );
       }
       .login-card {
         width: 100%;
@@ -123,7 +131,8 @@
       input[type='date']::-webkit-calendar-picker-indicator,
       input[type='time']::-webkit-calendar-picker-indicator,
       input[type='datetime-local']::-webkit-calendar-picker-indicator {
-        filter: invert(72%) sepia(42%) saturate(650%) hue-rotate(7deg) brightness(95%);
+        filter: invert(72%) sepia(42%) saturate(650%) hue-rotate(7deg)
+          brightness(95%);
         cursor: pointer;
         opacity: 1;
         width: 1.35rem;
@@ -748,7 +757,9 @@
               autocomplete="current-password"
             />
           </div>
-          <button type="button" class="btn-primary" id="loginBtn">Sign in</button>
+          <button type="button" class="btn-primary" id="loginBtn">
+            Sign in
+          </button>
           <p id="loginStatus" class="meta hidden" aria-live="polite"></p>
           <p id="loginError" class="error hidden" role="alert"></p>
         </div>
@@ -763,7 +774,9 @@
         </div>
         <ul class="nav">
           <li>
-            <a href="#bookings" data-panel="bookings" class="active">Bookings</a>
+            <a href="#bookings" data-panel="bookings" class="active"
+              >Bookings</a
+            >
           </li>
           <li><a href="#logs" data-panel="logs">Logs</a></li>
           <li><a href="#users" data-panel="users">Users</a></li>
@@ -774,7 +787,12 @@
         </ul>
         <div class="sidebar__footer">
           <p class="sidebar__user" id="sidebarUser"></p>
-          <button type="button" class="secondary" id="logoutBtn" style="width: 100%">
+          <button
+            type="button"
+            class="secondary"
+            id="logoutBtn"
+            style="width: 100%"
+          >
             Sign out
           </button>
         </div>
@@ -782,7 +800,12 @@
 
       <div class="main">
         <header class="topbar">
-          <button type="button" class="menu-toggle secondary" id="menuToggle" aria-label="Menu">
+          <button
+            type="button"
+            class="menu-toggle secondary"
+            id="menuToggle"
+            aria-label="Menu"
+          >
             ☰
           </button>
           <h2 id="panelTitle">Bookings</h2>
@@ -858,8 +881,14 @@
                   <input id="filterDateTo" type="date" />
                 </div>
                 <div class="filters-actions">
-                  <button type="button" id="bookingsApplyFilters">Apply now</button>
-                  <button type="button" class="secondary" id="bookingsClearFilters">
+                  <button type="button" id="bookingsApplyFilters">
+                    Apply now
+                  </button>
+                  <button
+                    type="button"
+                    class="secondary"
+                    id="bookingsClearFilters"
+                  >
                     Clear
                   </button>
                 </div>
@@ -886,7 +915,9 @@
               <div class="toolbar">
                 <div class="field-inline">
                   <label for="logsFile">Log file</label>
-                  <select id="logsFile"><option value="">Loading…</option></select>
+                  <select id="logsFile">
+                    <option value="">Loading…</option>
+                  </select>
                 </div>
                 <div class="field-inline">
                   <label for="logsLimit">Lines</label>
@@ -900,7 +931,9 @@
                 </div>
                 <button type="button" id="logsRefresh">Refresh</button>
               </div>
-              <div id="logsWrap"><p class="meta">Select a panel to load logs.</p></div>
+              <div id="logsWrap">
+                <p class="meta">Select a panel to load logs.</p>
+              </div>
             </div>
           </section>
 
@@ -918,7 +951,9 @@
                 </div>
                 <button type="button" id="usersRefresh">Refresh</button>
               </div>
-              <div id="usersWrap"><p class="meta">Select a panel to load users.</p></div>
+              <div id="usersWrap">
+                <p class="meta">Select a panel to load users.</p>
+              </div>
               <div class="pagination" id="usersPagination"></div>
             </div>
           </section>
@@ -929,13 +964,15 @@
                 <span class="coming-soon__badge">Coming soon</span>
                 <h3>Registered devices</h3>
                 <p>
-                  You will be able to register each authorised phone or tablet by its
-                  <strong>MAC address</strong> so only approved devices can install and use
-                  the Vale Executives Cars app.
+                  You will be able to register each authorised phone or tablet
+                  by its
+                  <strong>MAC address</strong> so only approved devices can
+                  install and use the Vale Executives Cars app.
                 </p>
                 <p>
-                  Unregistered devices will be blocked from downloading or signing in,
-                  which helps stop casual copying of the app onto personal phones.
+                  Unregistered devices will be blocked from downloading or
+                  signing in, which helps stop casual copying of the app onto
+                  personal phones.
                 </p>
                 <ul>
                   <li>Add and remove allowed MAC addresses</li>
@@ -945,12 +982,17 @@
               </div>
             </div>
           </section>
-
         </div>
       </div>
     </div>
 
-    <div id="bookingModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bookingModalTitle">
+    <div
+      id="bookingModal"
+      class="modal hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bookingModalTitle"
+    >
       <div class="modal__backdrop" id="bookingModalBackdrop"></div>
       <div class="modal__dialog card">
         <div class="modal__header">
@@ -958,7 +1000,14 @@
             <h3 id="bookingModalTitle">Booking</h3>
             <p class="meta" id="bookingModalSubtitle"></p>
           </div>
-          <button type="button" class="secondary" id="bookingModalClose" aria-label="Close">×</button>
+          <button
+            type="button"
+            class="secondary"
+            id="bookingModalClose"
+            aria-label="Close"
+          >
+            ×
+          </button>
         </div>
         <p id="bookingModalLoading" class="meta">Loading booking…</p>
         <div id="bookingModalBody" class="hidden">
@@ -994,7 +1043,13 @@
             </div>
             <div class="field-inline">
               <label for="editPassengers">Passengers</label>
-              <input id="editPassengers" type="number" min="1" step="1" placeholder="1" />
+              <input
+                id="editPassengers"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="1"
+              />
             </div>
             <div class="field-inline">
               <label for="editRoomNo">Room no.</label>
@@ -1014,11 +1069,23 @@
             </div>
             <div class="field-inline">
               <label for="editDistanceMiles">Distance (miles)</label>
-              <input id="editDistanceMiles" type="number" min="0" step="0.01" required />
+              <input
+                id="editDistanceMiles"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+              />
             </div>
             <div class="field-inline">
               <label for="editEstimatedFare">Fare (£)</label>
-              <input id="editEstimatedFare" type="number" min="0" step="0.01" required />
+              <input
+                id="editEstimatedFare"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+              />
             </div>
             <div class="field-inline pickup-datetime">
               <label for="editPreferredPickupDate">Preferred pickup</label>
@@ -1037,10 +1104,14 @@
           <p id="bookingModalError" class="error hidden" role="alert"></p>
         </div>
         <div class="modal__footer hidden" id="bookingModalFooter">
-          <button type="button" class="btn-danger" id="bookingDeleteBtn">Delete booking</button>
+          <button type="button" class="btn-danger" id="bookingDeleteBtn">
+            Delete booking
+          </button>
           <span class="modal__footer-spacer" aria-hidden="true"></span>
           <button type="button" id="bookingSaveBtn">Save changes</button>
-          <button type="button" class="secondary" id="bookingModalCancel">Cancel</button>
+          <button type="button" class="secondary" id="bookingModalCancel">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -1067,8 +1138,12 @@
         <p id="deleteConfirmError" class="error hidden" role="alert"></p>
         <div class="modal__footer">
           <span class="modal__footer-spacer" aria-hidden="true"></span>
-          <button type="button" class="secondary" id="deleteConfirmCancel">Cancel</button>
-          <button type="button" class="btn-danger" id="deleteConfirmOk">Delete</button>
+          <button type="button" class="secondary" id="deleteConfirmCancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-danger" id="deleteConfirmOk">
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -1124,7 +1199,9 @@
       };
 
       function readCookie(name) {
-        const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+        const m = document.cookie.match(
+          new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'),
+        );
         return m ? decodeURIComponent(m[1]) : '';
       }
 
@@ -1147,7 +1224,9 @@
       }
 
       function getToken() {
-        return readCookie(COOKIE) || sessionStorage.getItem(STORAGE_TOKEN) || '';
+        return (
+          readCookie(COOKIE) || sessionStorage.getItem(STORAGE_TOKEN) || ''
+        );
       }
 
       function authHeaders() {
@@ -1157,7 +1236,9 @@
 
       function parseApiResponse(res, body) {
         if (!res.ok || body.success === false) {
-          const err = new Error(body.message || res.statusText || 'Request failed');
+          const err = new Error(
+            body.message || res.statusText || 'Request failed',
+          );
           err.statusCode = body.statusCode || res.status;
           err.data = body.data;
           throw err;
@@ -1205,11 +1286,20 @@
         }
       }
 
+      function formatReturnPickupCell(booking) {
+        const tripType = booking.tripType || 'one-way';
+        if (tripType !== 'return') return '—';
+        if (booking.returnPickupAt) return escapeHtml(formatDate(booking.returnPickupAt));
+        return '<span class="meta">Not set</span>';
+      }
+
       function renderPagination(containerId, page, meta, onPage) {
         const el = document.getElementById(containerId);
         if (!meta || meta.totalPages <= 1) {
           el.innerHTML =
-            '<span class="meta">' + (meta ? meta.total + ' total' : '') + '</span>';
+            '<span class="meta">' +
+            (meta ? meta.total + ' total' : '') +
+            '</span>';
           return;
         }
         el.innerHTML =
@@ -1239,7 +1329,7 @@
         const rows = payload.data || [];
         if (!rows.length) return '<p class="meta">No bookings found.</p>';
         let html =
-          '<table><thead><tr><th>Ref</th><th>Customer</th><th>Route</th><th>Fare</th><th>Status</th><th>Submitted</th><th></th></tr></thead><tbody>';
+          '<table><thead><tr><th>Ref</th><th>Customer</th><th>Route</th><th>Return date</th><th>Fare</th><th>Status</th><th>Submitted</th><th></th></tr></thead><tbody>';
         for (const b of rows) {
           html +=
             '<tr><td data-label="Ref">' +
@@ -1252,6 +1342,8 @@
             escapeHtml(b.from) +
             ' → ' +
             escapeHtml(b.to) +
+            '</td><td data-label="Return date">' +
+            formatReturnPickupCell(b) +
             '</td><td data-label="Fare">£' +
             escapeHtml(Number(b.estimatedFare).toFixed(2)) +
             '</td><td data-label="Status"><span class="badge--status">' +
@@ -1322,7 +1414,8 @@
         const msgEl = document.getElementById('deleteConfirmMessage');
         const statusEl = document.getElementById('deleteConfirmStatus');
 
-        document.getElementById('deleteConfirmRef').textContent = 'Reference: ' + ref;
+        document.getElementById('deleteConfirmRef').textContent =
+          'Reference: ' + ref;
         statusEl.textContent = formatBookingStatusLabel(status);
         statusEl.classList.toggle('delete-confirm__status--warn', !isCompleted);
 
@@ -1336,7 +1429,9 @@
             '). Are you sure you want to delete it? This cannot be undone.';
         }
 
-        document.getElementById('deleteConfirmModal').classList.remove('hidden');
+        document
+          .getElementById('deleteConfirmModal')
+          .classList.remove('hidden');
       }
 
       async function executeDeleteBooking() {
@@ -1392,7 +1487,9 @@
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) return '';
         const pad = (n) => String(n).padStart(2, '0');
-        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+        return (
+          d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+        );
       }
 
       function isoToTimeInput(iso) {
@@ -1440,25 +1537,31 @@
           escapeHtml(formatDate(booking.updatedAt)) +
           '</dd></div>';
         document.getElementById('editBookingId').value = booking.id;
-        document.getElementById('editCustomerName').value = booking.customerName || '';
+        document.getElementById('editCustomerName').value =
+          booking.customerName || '';
         document.getElementById('editEmail').value = booking.email || '';
-        document.getElementById('editContactNumber').value = booking.contactNumber || '';
-        document.getElementById('editStatus').value = booking.status || 'pending';
+        document.getElementById('editContactNumber').value =
+          booking.contactNumber || '';
+        document.getElementById('editStatus').value =
+          booking.status || 'pending';
         document.getElementById('editFrom').value = booking.from || '';
         document.getElementById('editPassengers').value =
           booking.passengers != null ? String(booking.passengers) : '1';
         document.getElementById('editRoomNo').value = booking.roomNo || '';
         document.getElementById('editTo').value = booking.to || '';
         document.getElementById('editVia').value = booking.via || '';
-        document.getElementById('editVehicleType').value = booking.vehicleType || '';
-        document.getElementById('editDistanceMiles').value = String(booking.distanceMiles ?? '');
-        document.getElementById('editEstimatedFare').value = String(booking.estimatedFare ?? '');
-        document.getElementById('editPreferredPickupDate').value = isoToDateInput(
-          booking.preferredPickupAt,
+        document.getElementById('editVehicleType').value =
+          booking.vehicleType || '';
+        document.getElementById('editDistanceMiles').value = String(
+          booking.distanceMiles ?? '',
         );
-        document.getElementById('editPreferredPickupTime').value = isoToTimeInput(
-          booking.preferredPickupAt,
+        document.getElementById('editEstimatedFare').value = String(
+          booking.estimatedFare ?? '',
         );
+        document.getElementById('editPreferredPickupDate').value =
+          isoToDateInput(booking.preferredPickupAt);
+        document.getElementById('editPreferredPickupTime').value =
+          isoToTimeInput(booking.preferredPickupAt);
       }
 
       function readBookingEditPayload() {
@@ -1467,18 +1570,27 @@
           document.getElementById('editPreferredPickupTime').value,
         );
         return {
-          customerName: document.getElementById('editCustomerName').value.trim(),
+          customerName: document
+            .getElementById('editCustomerName')
+            .value.trim(),
           email: document.getElementById('editEmail').value.trim(),
-          contactNumber: document.getElementById('editContactNumber').value.trim(),
+          contactNumber: document
+            .getElementById('editContactNumber')
+            .value.trim(),
           status: document.getElementById('editStatus').value,
           from: document.getElementById('editFrom').value.trim(),
-          passengers: parseInt(document.getElementById('editPassengers').value, 10) || 1,
+          passengers:
+            parseInt(document.getElementById('editPassengers').value, 10) || 1,
           roomNo: document.getElementById('editRoomNo').value.trim(),
           to: document.getElementById('editTo').value.trim(),
           via: document.getElementById('editVia').value.trim(),
           vehicleType: document.getElementById('editVehicleType').value.trim(),
-          distanceMiles: Number(document.getElementById('editDistanceMiles').value),
-          estimatedFare: Number(document.getElementById('editEstimatedFare').value),
+          distanceMiles: Number(
+            document.getElementById('editDistanceMiles').value,
+          ),
+          estimatedFare: Number(
+            document.getElementById('editEstimatedFare').value,
+          ),
           preferredPickupAt: pickup,
         };
       }
@@ -1509,7 +1621,8 @@
 
       async function saveBooking() {
         const id =
-          activeBookingId || document.getElementById('editBookingId').value.trim();
+          activeBookingId ||
+          document.getElementById('editBookingId').value.trim();
         if (!id) return;
         const errEl = document.getElementById('bookingModalError');
         const btn = document.getElementById('bookingSaveBtn');
@@ -1535,26 +1648,35 @@
 
       function deleteBookingFromModal() {
         const id =
-          activeBookingId || document.getElementById('editBookingId').value.trim();
+          activeBookingId ||
+          document.getElementById('editBookingId').value.trim();
         if (!id) return;
         promptDeleteBooking({
           id,
           ref: activeBookingRef || id,
-          status: activeBookingStatus || document.getElementById('editStatus').value,
+          status:
+            activeBookingStatus || document.getElementById('editStatus').value,
           closeModalOnSuccess: true,
         });
       }
 
       function readBookingFiltersFromForm() {
-        bookingFilters.bookingRef = document.getElementById('filterBookingRef').value.trim();
+        bookingFilters.bookingRef = document
+          .getElementById('filterBookingRef')
+          .value.trim();
         bookingFilters.status = document.getElementById('filterStatus').value;
         bookingFilters.customerName = document
           .getElementById('filterCustomerName')
           .value.trim();
-        bookingFilters.email = document.getElementById('filterEmail').value.trim();
-        bookingFilters.from = document.getElementById('filterFrom').value.trim();
+        bookingFilters.email = document
+          .getElementById('filterEmail')
+          .value.trim();
+        bookingFilters.from = document
+          .getElementById('filterFrom')
+          .value.trim();
         bookingFilters.to = document.getElementById('filterTo').value.trim();
-        bookingFilters.dateFrom = document.getElementById('filterDateFrom').value;
+        bookingFilters.dateFrom =
+          document.getElementById('filterDateFrom').value;
         bookingFilters.dateTo = document.getElementById('filterDateTo').value;
       }
 
@@ -1643,13 +1765,17 @@
             scheduleBookingsSearch(false);
           });
         });
-        document.getElementById('bookingsApplyFilters').addEventListener('click', () => {
-          scheduleBookingsSearch(true);
-        });
-        document.getElementById('bookingsClearFilters').addEventListener('click', () => {
-          clearBookingFiltersForm();
-          scheduleBookingsSearch(true);
-        });
+        document
+          .getElementById('bookingsApplyFilters')
+          .addEventListener('click', () => {
+            scheduleBookingsSearch(true);
+          });
+        document
+          .getElementById('bookingsClearFilters')
+          .addEventListener('click', () => {
+            clearBookingFiltersForm();
+            scheduleBookingsSearch(true);
+          });
       }
 
       async function fetchApi(path, options = {}) {
@@ -1670,7 +1796,9 @@
         });
         const body = await res.json().catch(() => ({}));
         if (!res.ok || body.success === false) {
-          const err = new Error(body.message || res.statusText || 'Request failed');
+          const err = new Error(
+            body.message || res.statusText || 'Request failed',
+          );
           err.statusCode = body.statusCode || res.status;
           err.data = body.data;
           throw err;
@@ -1689,20 +1817,27 @@
           bookingsMeta = data.meta || bookingsMeta;
           wrap.innerHTML = renderBookingsTable(data);
           bindBookingsTableActions();
-          renderPagination('bookingsPagination', bookingsPage, bookingsMeta, (p) => {
-            bookingsPage = p;
-            readBookingFiltersFromForm();
-            loadBookings();
-          });
+          renderPagination(
+            'bookingsPagination',
+            bookingsPage,
+            bookingsMeta,
+            (p) => {
+              bookingsPage = p;
+              readBookingFiltersFromForm();
+              loadBookings();
+            },
+          );
         } catch (e) {
           if (e.name === 'AbortError') return;
           if (e.statusCode === 401) {
             wrap.innerHTML =
               '<p class="error">Session expired. <button type="button" class="secondary" id="bookingsRelogin">Sign in again</button></p>';
-            document.getElementById('bookingsRelogin').addEventListener('click', () => {
-              clearAuth();
-              showLogin();
-            });
+            document
+              .getElementById('bookingsRelogin')
+              .addEventListener('click', () => {
+                clearAuth();
+                showLogin();
+              });
             return;
           }
           wrap.innerHTML = '<p class="error">' + escapeHtml(e.message) + '</p>';
@@ -1733,7 +1868,9 @@
         const wrap = document.getElementById('usersWrap');
         wrap.innerHTML = '<p class="meta">Loading users…</p>';
         try {
-          const data = await api('/users?page=' + usersPage + '&limit=' + usersLimit);
+          const data = await api(
+            '/users?page=' + usersPage + '&limit=' + usersLimit,
+          );
           usersMeta = data.meta || usersMeta;
           wrap.innerHTML = renderUsersTable(data);
           renderPagination('usersPagination', usersPage, usersMeta, (p) => {
@@ -1771,7 +1908,8 @@
             select.value = logsFile;
           }
         } catch (e) {
-          select.innerHTML = '<option value="">' + escapeHtml(e.message) + '</option>';
+          select.innerHTML =
+            '<option value="">' + escapeHtml(e.message) + '</option>';
         }
       }
 
@@ -1811,9 +1949,13 @@
           a.classList.toggle('active', a.getAttribute('data-panel') === name);
         });
         document.querySelectorAll('.panel').forEach((p) => {
-          p.classList.toggle('active', p.id === 'panel' + name.charAt(0).toUpperCase() + name.slice(1));
+          p.classList.toggle(
+            'active',
+            p.id === 'panel' + name.charAt(0).toUpperCase() + name.slice(1),
+          );
         });
-        document.getElementById('panelTitle').textContent = PANEL_TITLES[name] || name;
+        document.getElementById('panelTitle').textContent =
+          PANEL_TITLES[name] || name;
         if (name === 'bookings') loadBookings();
         if (name === 'logs') {
           loadLogFiles().then(loadLogs);
@@ -1857,7 +1999,8 @@
         try {
           const s = JSON.parse(sessionStorage.getItem(ATTEMPT_STORAGE) || '{}');
           if (typeof s.maxAttempts === 'number') maxAttempts = s.maxAttempts;
-          if (typeof s.attemptsRemaining === 'number') attemptsRemaining = s.attemptsRemaining;
+          if (typeof s.attemptsRemaining === 'number')
+            attemptsRemaining = s.attemptsRemaining;
           if (s.lockedUntil) lockoutUntil = new Date(s.lockedUntil);
         } catch {
           /* ignore */
@@ -1866,8 +2009,10 @@
 
       function applyAttemptPayload(data) {
         if (!data || typeof data !== 'object') return;
-        if (typeof data.maxAttempts === 'number') maxAttempts = data.maxAttempts;
-        if (typeof data.attemptsRemaining === 'number') attemptsRemaining = data.attemptsRemaining;
+        if (typeof data.maxAttempts === 'number')
+          maxAttempts = data.maxAttempts;
+        if (typeof data.attemptsRemaining === 'number')
+          attemptsRemaining = data.attemptsRemaining;
         if (data.lockedUntil) lockoutUntil = new Date(data.lockedUntil);
         saveAttemptState();
         updateAttemptUi();
@@ -1904,7 +2049,10 @@
         attemptsEl.classList.remove('hidden');
         attemptsEl.textContent =
           'Attempts remaining: ' + attemptsRemaining + ' of ' + maxAttempts;
-        attemptsEl.classList.toggle('attempts--warn', attemptsRemaining > 0 && attemptsRemaining <= 2);
+        attemptsEl.classList.toggle(
+          'attempts--warn',
+          attemptsRemaining > 0 && attemptsRemaining <= 2,
+        );
       }
 
       async function tryRestoreSession() {
@@ -1993,7 +2141,9 @@
           e.preventDefault();
           setPanel(a.getAttribute('data-panel'));
           if (window.innerWidth <= 900) {
-            document.getElementById('sidebar').classList.remove('sidebar--open');
+            document
+              .getElementById('sidebar')
+              .classList.remove('sidebar--open');
           }
         });
       });
@@ -2002,37 +2152,65 @@
         document.getElementById('sidebar').classList.toggle('sidebar--open');
       });
 
-      document.getElementById('bookingsLimit').addEventListener('change', (e) => {
-        bookingsLimit = Number(e.target.value);
-        bookingsPage = 1;
-        readBookingFiltersFromForm();
-        loadBookings();
-      });
-      document.getElementById('bookingsRefresh').addEventListener('click', () => {
-        readBookingFiltersFromForm();
-        loadBookings();
-      });
+      document
+        .getElementById('bookingsLimit')
+        .addEventListener('change', (e) => {
+          bookingsLimit = Number(e.target.value);
+          bookingsPage = 1;
+          readBookingFiltersFromForm();
+          loadBookings();
+        });
+      document
+        .getElementById('bookingsRefresh')
+        .addEventListener('click', () => {
+          readBookingFiltersFromForm();
+          loadBookings();
+        });
       setupBookingFilterListeners();
 
-      document.getElementById('bookingModalClose').addEventListener('click', closeBookingModal);
-      document.getElementById('bookingModalCancel').addEventListener('click', closeBookingModal);
-      document.getElementById('bookingModalBackdrop').addEventListener('click', closeBookingModal);
-      document.getElementById('bookingSaveBtn').addEventListener('click', saveBooking);
-      document.getElementById('bookingDeleteBtn').addEventListener('click', deleteBookingFromModal);
-      document.getElementById('deleteConfirmCancel').addEventListener('click', closeDeleteConfirmModal);
-      document.getElementById('deleteConfirmBackdrop').addEventListener('click', closeDeleteConfirmModal);
-      document.getElementById('deleteConfirmOk').addEventListener('click', executeDeleteBooking);
-      document.getElementById('bookingEditForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        saveBooking();
-      });
+      document
+        .getElementById('bookingModalClose')
+        .addEventListener('click', closeBookingModal);
+      document
+        .getElementById('bookingModalCancel')
+        .addEventListener('click', closeBookingModal);
+      document
+        .getElementById('bookingModalBackdrop')
+        .addEventListener('click', closeBookingModal);
+      document
+        .getElementById('bookingSaveBtn')
+        .addEventListener('click', saveBooking);
+      document
+        .getElementById('bookingDeleteBtn')
+        .addEventListener('click', deleteBookingFromModal);
+      document
+        .getElementById('deleteConfirmCancel')
+        .addEventListener('click', closeDeleteConfirmModal);
+      document
+        .getElementById('deleteConfirmBackdrop')
+        .addEventListener('click', closeDeleteConfirmModal);
+      document
+        .getElementById('deleteConfirmOk')
+        .addEventListener('click', executeDeleteBooking);
+      document
+        .getElementById('bookingEditForm')
+        .addEventListener('submit', (e) => {
+          e.preventDefault();
+          saveBooking();
+        });
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
-        if (!document.getElementById('deleteConfirmModal').classList.contains('hidden')) {
+        if (
+          !document
+            .getElementById('deleteConfirmModal')
+            .classList.contains('hidden')
+        ) {
           closeDeleteConfirmModal();
           return;
         }
-        if (!document.getElementById('bookingModal').classList.contains('hidden')) {
+        if (
+          !document.getElementById('bookingModal').classList.contains('hidden')
+        ) {
           closeBookingModal();
         }
       });
@@ -2042,7 +2220,9 @@
         usersPage = 1;
         loadUsers();
       });
-      document.getElementById('usersRefresh').addEventListener('click', loadUsers);
+      document
+        .getElementById('usersRefresh')
+        .addEventListener('click', loadUsers);
 
       document.getElementById('logsLimit').addEventListener('change', (e) => {
         logsLimit = Number(e.target.value);
@@ -2052,31 +2232,39 @@
         logsFile = e.target.value;
         loadLogs();
       });
-      document.getElementById('logsRefresh').addEventListener('click', loadLogs);
+      document
+        .getElementById('logsRefresh')
+        .addEventListener('click', loadLogs);
 
-      document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      document
+        .getElementById('loginBtn')
+        .addEventListener('click', handleLogin);
       document.getElementById('loginEmail').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
           handleLogin();
         }
       });
-      document.getElementById('loginPassword').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleLogin();
-        }
-      });
+      document
+        .getElementById('loginPassword')
+        .addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleLogin();
+          }
+        });
 
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        try {
-          await api('/auth/signout', { method: 'POST' });
-        } catch {
-          /* ignore */
-        }
-        clearAuth();
-        showLogin(true);
-      });
+      document
+        .getElementById('logoutBtn')
+        .addEventListener('click', async () => {
+          try {
+            await api('/auth/signout', { method: 'POST' });
+          } catch {
+            /* ignore */
+          }
+          clearAuth();
+          showLogin(true);
+        });
 
       loadAttemptState();
       updateAttemptUi();
