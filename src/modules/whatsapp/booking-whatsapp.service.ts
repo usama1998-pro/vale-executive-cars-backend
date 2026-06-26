@@ -21,21 +21,25 @@ export class BookingWhatsappService {
     private readonly messaging: WhatsappMessagingService,
   ) {}
 
-  private formatTravelDateLabel(pickupAt: Date): string {
+  private formatDateTimeLabel(date: Date): string {
     const timeZone = process.env.TZ || 'Europe/London';
-    const dateLabel = pickupAt.toLocaleDateString('en-GB', {
+    const dateLabel = date.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
       timeZone,
     });
-    const timeLabel = pickupAt.toLocaleTimeString('en-GB', {
+    const timeLabel = date.toLocaleTimeString('en-GB', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
       timeZone,
     });
     return `${dateLabel} at ${timeLabel}`;
+  }
+
+  private formatReturnDateLabel(returnPickupAt: Date | null | undefined): string {
+    return returnPickupAt ? this.formatDateTimeLabel(returnPickupAt) : 'None';
   }
 
   private formatStopoverLocation(via: string): string {
@@ -101,7 +105,8 @@ export class BookingWhatsappService {
       roomNo: this.formatRoomNo(booking.roomNo),
       passengers: this.formatPassengers(booking.passengers),
       destinationLocation: booking.dropoffTo,
-      travelDateLabel: this.formatTravelDateLabel(booking.preferredPickupAt),
+      pickupDateLabel: this.formatDateTimeLabel(booking.preferredPickupAt),
+      returnDateLabel: this.formatReturnDateLabel(booking.returnPickupAt),
       selectedService: this.formatSelectedService(booking.vehicleType),
       totalFare: this.formatTotalFare(booking.estimatedFare),
     });

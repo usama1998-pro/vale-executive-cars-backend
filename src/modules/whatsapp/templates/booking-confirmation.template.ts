@@ -8,7 +8,7 @@ import {
 } from '../utils/template-parameter.util';
 
 /**
- * Meta template: vale_executive_template
+ * Meta template: vale_executive_booking
  *
  * A new customer booking has been received.
  *
@@ -23,12 +23,13 @@ import {
  * • Room No. : {{6}}
  * • Passengers: {{7}}
  * • Destination Location: {{8}}
- * • Travel Date: {{9}}
+ * • Pickup Date  & Time: {{9}}
+ * • Return Date & Time: {{10}}
  *
  * Selected Service:
- * {{10}}
+ * {{11}}
  *
- * Total Far: {{11}}
+ * Total Fare: {{12}}
  */
 export type BookingConfirmationTemplateInput = {
   to: string;
@@ -40,7 +41,8 @@ export type BookingConfirmationTemplateInput = {
   roomNo: string;
   passengers: string;
   destinationLocation: string;
-  travelDateLabel: string;
+  pickupDateLabel: string;
+  returnDateLabel: string;
   selectedService: string;
   totalFare: string;
   templateName: string;
@@ -91,7 +93,11 @@ export function buildBookingConfirmationBodyComponent(
       },
       {
         type: 'text',
-        text: sanitizeTemplateParameter(input.travelDateLabel, maxLength),
+        text: sanitizeTemplateParameter(input.pickupDateLabel, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.returnDateLabel, maxLength),
       },
       {
         type: 'text',
@@ -125,7 +131,8 @@ export function buildBookingConfirmationTemplateRequest(
           roomNo: input.roomNo,
           passengers: input.passengers,
           destinationLocation: input.destinationLocation,
-          travelDateLabel: input.travelDateLabel,
+          pickupDateLabel: input.pickupDateLabel,
+          returnDateLabel: input.returnDateLabel,
           selectedService: input.selectedService,
           totalFare: input.totalFare,
         }),

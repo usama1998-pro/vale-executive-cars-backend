@@ -69,7 +69,7 @@ export function getWhatsappConfig(): WhatsappConfig | null {
       process.env.WHATSAPP_BUSINESS_NAME?.trim() || 'Vale Executives Cars',
     bookingConfirmationTemplate:
       process.env.WHATSAPP_BOOKING_TEMPLATE?.trim() ||
-      'vale_executive_template',
+      'vale_executive_booking',
     templateLanguageCode: 'en',
     defaultCountryCode:
       process.env.WHATSAPP_DEFAULT_COUNTRY_CODE?.trim() || '44',

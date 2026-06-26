@@ -28,7 +28,10 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "ensure-admin-from-env": "tsx scripts/ensure-admin-from-env.ts",
-    "create-admin": "ts-node scripts/create-admin.ts"
+    "create-admin": "ts-node scripts/create-admin.ts",
+    "test:whatsapp": "tsx scripts/test-whatsapp.ts",
+    "test:whatsapp:status": "tsx scripts/test-whatsapp.ts status",
+    "test:whatsapp:dry-run": "tsx scripts/test-whatsapp.ts dry-run"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

@@ -49,7 +49,12 @@ export class SendBookingConfirmationDto {
   @ApiProperty({ example: '5 June 2026 at 3:30 pm' })
   @IsString()
   @MinLength(1)
-  travelDateLabel!: string;
+  pickupDateLabel!: string;
+
+  @ApiPropertyOptional({ example: '6 June 2026 at 4:00 pm' })
+  @IsOptional()
+  @IsString()
+  returnDateLabel?: string;
 
   @ApiProperty({ example: 'EXECUTIVE' })
   @IsString()
