@@ -12,7 +12,7 @@ export type FileLoggerConfig = {
 
 const DEFAULT_FILE = 'logs/app.log';
 const DEFAULT_MAX_SIZE_BYTES = 10 * 1024 * 1024;
-const DEFAULT_MAX_FILES = 5;
+const DEFAULT_MAX_FILES = 3;
 
 function parseBoolean(raw: string | undefined, defaultValue: boolean): boolean {
   if (raw === undefined || raw.trim() === '') {

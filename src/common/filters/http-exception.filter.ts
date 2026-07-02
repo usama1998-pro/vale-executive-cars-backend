@@ -29,10 +29,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
         : undefined;
 
     const message = this.resolveMessage(status, raw, exception);
+    const internalMessage = this.resolveInternalMessage(raw, exception, message);
 
     if (status >= 500) {
       this.logger.error(
-        `${request.method} ${request.url} → ${status}: ${message}`,
+        `${request.method} ${request.url} → ${status}: ${internalMessage}`,
         exception instanceof Error ? exception.stack : undefined,
       );
     } else {
@@ -132,5 +133,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
       lower.includes('stack') ||
       lower.includes('internal server')
     );
+  }
+
+  private resolveInternalMessage(
+    raw: string | object | undefined,
+    exception: unknown,
+    fallback: string,
+  ): string {
+    if (exception instanceof Error && exception.message?.trim()) {
+      return exception.message.trim();
+    }
+
+    const fromException = this.extractRawMessage(raw);
+    if (fromException?.trim()) {
+      return fromException.trim();
+    }
+
+    return fallback;
   }
 }
