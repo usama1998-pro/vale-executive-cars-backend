@@ -22,7 +22,6 @@ type ResolvedWaypoint = {
 export type RouteQuoteResult = {
   from: GeocodedLocation;
   to: GeocodedLocation;
-  via?: GeocodedLocation;
   distanceMeters: number;
   distanceMiles: number;
   distanceKm: number;
@@ -44,21 +43,17 @@ export class RoutingService {
   ) {}
 
   async getQuote(dto: RouteQuoteDto): Promise<RouteQuoteResult> {
-    const viaInput = this.normalizeVia(dto.via);
     const waypoints = await this.resolveWaypoints([
       { label: 'pickup', input: dto.from },
-      ...(viaInput ? [{ label: 'via', input: viaInput }] : []),
       { label: 'drop-off', input: dto.to },
     ]);
 
-    const route = viaInput
-      ? await this.getViaRouteTotals(waypoints)
-      : await this.getDrivingRouteSafe(
-          waypoints.map(({ location }) => ({
-            latitude: location.latitude,
-            longitude: location.longitude,
-          })),
-        );
+    const route = await this.getDrivingRouteSafe(
+      waypoints.map(({ location }) => ({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      })),
+    );
 
     const distanceMiles = milesFromMeters(route.distanceMeters);
     const distanceKm = kmFromMiles(distanceMiles);
@@ -67,8 +62,7 @@ export class RoutingService {
 
     return {
       from: waypoints[0].location,
-      to: waypoints[waypoints.length - 1].location,
-      via: viaInput ? waypoints[1].location : undefined,
+      to: waypoints[1].location,
       distanceMeters: route.distanceMeters,
       distanceMiles,
       distanceKm,
@@ -96,47 +90,6 @@ export class RoutingService {
 
   searchPlaces(input: string) {
     return this.places.searchPlaces(input);
-  }
-
-  /**
-   * Via journeys: sum Pickup→Via and Via→Drop-off distances, then price once
-   * on the combined total miles.
-   */
-  private async getViaRouteTotals(waypoints: ResolvedWaypoint[]) {
-    const pickup = waypoints[0].location;
-    const via = waypoints[1].location;
-    const dropoff = waypoints[waypoints.length - 1].location;
-
-    const toCoordinate = (location: GeocodedLocation) => ({
-      latitude: location.latitude,
-      longitude: location.longitude,
-    });
-
-    const [pickupToVia, viaToDropoff] = await Promise.all([
-      this.getDrivingRouteSafe([toCoordinate(pickup), toCoordinate(via)]),
-      this.getDrivingRouteSafe([toCoordinate(via), toCoordinate(dropoff)]),
-    ]);
-
-    const distanceMeters =
-      pickupToVia.distanceMeters + viaToDropoff.distanceMeters;
-
-    this.logger.debug(
-      `Via route: pickup→via ${milesFromMeters(pickupToVia.distanceMeters)} mi + via→drop-off ${milesFromMeters(viaToDropoff.distanceMeters)} mi = ${milesFromMeters(distanceMeters)} mi total`,
-    );
-
-    return {
-      distanceMeters,
-      durationSeconds:
-        pickupToVia.durationSeconds + viaToDropoff.durationSeconds,
-    };
-  }
-
-  private normalizeVia(via?: string): string | undefined {
-    const trimmed = via?.trim();
-    if (!trimmed || trimmed.toLowerCase() === 'car') {
-      return undefined;
-    }
-    return trimmed;
   }
 
   private async resolveWaypoints(

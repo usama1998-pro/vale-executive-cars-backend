@@ -9,6 +9,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MaxLength,
   Min,
   MinLength,
   ValidateIf,
@@ -55,6 +56,12 @@ export class UpdateBookingDto {
   @MinLength(1)
   to?: string;
 
+  @ApiPropertyOptional({ maxLength: 250 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  note?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -72,12 +79,6 @@ export class UpdateBookingDto {
   @IsString()
   @MinLength(1)
   vehicleType?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  @MinLength(1)
-  via?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

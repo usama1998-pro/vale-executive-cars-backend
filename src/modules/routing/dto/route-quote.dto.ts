@@ -1,8 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsIn,
   IsNumber,
-  IsOptional,
   IsString,
   Min,
   MinLength,
@@ -19,14 +18,6 @@ export class RouteQuoteDto {
   @IsString()
   @MinLength(1)
   to!: string;
-
-  @ApiPropertyOptional({
-    example: 'Birmingham',
-    description: 'Optional waypoint between pickup and drop-off',
-  })
-  @IsOptional()
-  @IsString()
-  via?: string;
 
   @ApiProperty({
     example: 'executive',

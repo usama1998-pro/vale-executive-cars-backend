@@ -38,11 +38,11 @@ model Booking {
   roomNo           String?       @map("room_no")
   passengers       Int?          @map("passengers")
   dropoffTo        String        @map("dropoff_to")
+  note             String?       @db.VarChar(500)
   distanceMiles    Float         @map("distance_miles")
   estimatedFare    Float         @map("estimated_fare")
   vehicleType      String        @map("vehicle_type")
   tripType         String        @default("one-way") @map("trip_type")
-  via              String
   preferredPickupAt DateTime     @map("preferred_pickup_at")
   returnPickupAt   DateTime?     @map("return_pickup_at")
   status           BookingStatus @default(submitted)

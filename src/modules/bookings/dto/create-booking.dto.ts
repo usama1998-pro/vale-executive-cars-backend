@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   Matches,
+  MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
@@ -59,6 +60,12 @@ export class CreateBookingDto {
   @MinLength(1)
   to!: string;
 
+  @ApiPropertyOptional({ example: 'Please call on arrival', maxLength: 250 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  note?: string;
+
   @ApiProperty({ example: 80.4, description: 'Journey distance in miles' })
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
@@ -73,11 +80,6 @@ export class CreateBookingDto {
   @IsString()
   @MinLength(1)
   vehicleType!: string;
-
-  @ApiProperty({ example: 'car' })
-  @IsString()
-  @MinLength(1)
-  via!: string;
 
   @ApiProperty({ example: '2026-05-22T01:30:00.000Z' })
   @IsDateString()

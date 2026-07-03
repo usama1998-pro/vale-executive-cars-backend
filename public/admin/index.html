@@ -618,6 +618,129 @@
       #deleteConfirmModal {
         z-index: 1100;
       }
+      .booking-create-dialog {
+        max-width: 520px;
+      }
+      .booking-app-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .booking-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .booking-section__title {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--gold);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin: 0.15rem 0 0;
+      }
+      .booking-section__title::before {
+        content: '◆';
+        font-size: 0.55rem;
+        opacity: 0.85;
+      }
+      .trip-type-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .trip-type-toggle button {
+        min-height: 2.75rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--gold);
+        font-weight: 600;
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+      .trip-type-toggle button.active {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: #1a1608;
+      }
+      .booking-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .booking-app-form textarea {
+        width: 100%;
+        min-height: 4.5rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.95rem;
+        resize: vertical;
+        font-family: inherit;
+      }
+      .booking-app-form textarea:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+      }
+      .places-field {
+        position: relative;
+      }
+      .places-suggestions {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 2px);
+        z-index: 5;
+        margin: 0;
+        padding: 0.25rem 0;
+        list-style: none;
+        max-height: 10rem;
+        overflow: auto;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+      .places-suggestions li button {
+        width: 100%;
+        text-align: left;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        font-size: 0.88rem;
+        cursor: pointer;
+      }
+      .places-suggestions li button:hover {
+        background: rgba(201, 162, 39, 0.12);
+      }
+      .create-estimate-panel {
+        padding: 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(201, 162, 39, 0.06);
+        display: grid;
+        gap: 0.65rem;
+      }
+      .create-estimate-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+      }
+      .create-estimate-summary strong {
+        color: var(--gold);
+      }
+      .toolbar .btn-create {
+        margin-left: auto;
+      }
       .booking-detail-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -904,6 +1027,9 @@
                   </select>
                 </div>
                 <button type="button" id="bookingsRefresh">Refresh</button>
+                <button type="button" id="bookingsCreateBtn" class="btn-create">
+                  Create booking
+                </button>
               </div>
               <div id="bookingsWrap"><p class="meta">Loading…</p></div>
               <div class="pagination" id="bookingsPagination"></div>
@@ -1060,8 +1186,8 @@
               <input id="editTo" type="text" required />
             </div>
             <div class="field-inline">
-              <label for="editVia">Via</label>
-              <input id="editVia" type="text" required />
+              <label for="editNote">Note</label>
+              <input id="editNote" type="text" placeholder="Optional" maxlength="250" />
             </div>
             <div class="field-inline">
               <label for="editVehicleType">Vehicle</label>
@@ -1130,6 +1256,193 @@
           <span class="modal__footer-spacer" aria-hidden="true"></span>
           <button type="button" id="bookingSaveBtn">Save changes</button>
           <button type="button" class="secondary" id="bookingModalCancel">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="bookingCreateModal"
+      class="modal hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bookingCreateTitle"
+    >
+      <div class="modal__backdrop" id="bookingCreateBackdrop"></div>
+      <div class="modal__dialog card booking-create-dialog">
+        <div class="modal__header">
+          <div>
+            <h3 id="bookingCreateTitle">Book executive taxi</h3>
+            <p class="meta">Create a new booking — same flow as the customer app</p>
+          </div>
+          <button
+            type="button"
+            class="secondary"
+            id="bookingCreateClose"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <form id="bookingCreateForm" class="booking-app-form">
+          <div class="booking-section">
+            <p class="booking-section__title">TRIP TYPE</p>
+            <div class="trip-type-toggle" id="createTripTypeToggle">
+              <button type="button" data-trip="one-way" class="active">
+                ONE WAY
+              </button>
+              <button type="button" data-trip="return">RETURN</button>
+            </div>
+          </div>
+
+          <div class="booking-section">
+            <p class="booking-section__title">CUSTOMER DETAILS</p>
+            <div class="field-inline">
+              <label for="createCustomerName">Customer name</label>
+              <input id="createCustomerName" type="text" required />
+            </div>
+            <div class="field-inline">
+              <label for="createContactNumber">Contact number</label>
+              <input id="createContactNumber" type="text" required />
+            </div>
+            <div class="field-inline">
+              <label for="createEmail">Email</label>
+              <input id="createEmail" type="email" required />
+            </div>
+            <div class="booking-field-row">
+              <div class="field-inline">
+                <label for="createPassengers">Passengers (max 8)</label>
+                <input
+                  id="createPassengers"
+                  type="number"
+                  min="1"
+                  max="8"
+                  step="1"
+                  value="1"
+                  required
+                />
+              </div>
+              <div class="field-inline">
+                <label for="createRoomNo">Room no. (optional)</label>
+                <input id="createRoomNo" type="text" placeholder="Optional" />
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-section">
+            <p class="booking-section__title">JOURNEY DETAILS</p>
+            <div class="field-inline places-field">
+              <label for="createFrom">Pickup</label>
+              <input
+                id="createFrom"
+                type="text"
+                required
+                autocomplete="off"
+                data-places="createFromSuggestions"
+              />
+              <ul
+                id="createFromSuggestions"
+                class="places-suggestions hidden"
+                role="listbox"
+              ></ul>
+            </div>
+            <div class="field-inline places-field">
+              <label for="createTo">Drop-off</label>
+              <input
+                id="createTo"
+                type="text"
+                required
+                autocomplete="off"
+                data-places="createToSuggestions"
+              />
+              <ul
+                id="createToSuggestions"
+                class="places-suggestions hidden"
+                role="listbox"
+              ></ul>
+            </div>
+            <div class="field-inline pickup-datetime">
+              <label for="createPreferredPickupDate">Preferred pickup</label>
+              <div class="pickup-datetime__row">
+                <div class="pickup-datetime__field">
+                  <label for="createPreferredPickupDate">Date</label>
+                  <input id="createPreferredPickupDate" type="date" required />
+                </div>
+                <div class="pickup-datetime__field">
+                  <label for="createPreferredPickupTime">Time</label>
+                  <input id="createPreferredPickupTime" type="time" required />
+                </div>
+              </div>
+            </div>
+            <div
+              class="field-inline pickup-datetime hidden"
+              id="createReturnPickupWrap"
+            >
+              <label for="createReturnPickupDate">Return pickup (optional)</label>
+              <div class="pickup-datetime__row">
+                <div class="pickup-datetime__field">
+                  <label for="createReturnPickupDate">Date</label>
+                  <input id="createReturnPickupDate" type="date" />
+                </div>
+                <div class="pickup-datetime__field">
+                  <label for="createReturnPickupTime">Time</label>
+                  <input id="createReturnPickupTime" type="time" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-inline">
+            <label for="createNote">Note (optional, max 250 chars)</label>
+            <textarea
+              id="createNote"
+              maxlength="250"
+              placeholder="Optional note for the driver or team"
+            ></textarea>
+          </div>
+
+          <div class="field-inline">
+            <label for="createStatus">Booking status</label>
+            <select id="createStatus">
+              <option value="submitted" selected>Submitted</option>
+              <option value="pending">Pending</option>
+              <option value="accepted">Accepted</option>
+            </select>
+          </div>
+
+          <div id="createEstimatePanel" class="create-estimate-panel hidden">
+            <p class="booking-section__title" style="margin: 0">ESTIMATE</p>
+            <div class="field-inline">
+              <label for="createVehicleType">Vehicle</label>
+              <select id="createVehicleType">
+                <option value="saloon">Premium vehicle</option>
+                <option value="executive" selected>Executive vehicle</option>
+                <option value="mpv">Executive MPV (7 seater)</option>
+              </select>
+            </div>
+            <div class="create-estimate-summary">
+              <span
+                >Distance: <strong id="createDistanceLabel">—</strong> mi</span
+              >
+              <span
+                >Duration: <strong id="createDurationLabel">—</strong></span
+              >
+              <span
+                >Fare: <strong id="createFareLabel">—</strong></span
+              >
+            </div>
+          </div>
+
+          <p id="bookingCreateError" class="error hidden" role="alert"></p>
+        </form>
+        <div class="modal__footer">
+          <span class="modal__footer-spacer" aria-hidden="true"></span>
+          <button type="button" id="bookingCreateEstimateBtn">Get estimate</button>
+          <button type="button" id="bookingCreateSubmitBtn" disabled>
+            Create booking
+          </button>
+          <button type="button" class="secondary" id="bookingCreateCancel">
             Cancel
           </button>
         </div>
@@ -1206,6 +1519,9 @@
       let isAuthenticated = false;
       let bootstrapAbort = null;
       let loginInProgress = false;
+      let createQuoteState = null;
+      let createTripType = 'one-way';
+      let placesSearchTimer = null;
 
       const bookingFilters = {
         bookingRef: '',
@@ -1533,6 +1849,320 @@
         wrap.style.display = tripType === 'return' ? '' : 'none';
       }
 
+      function getDefaultPickupParts() {
+        const date = new Date();
+        date.setMinutes(Math.ceil(date.getMinutes() / 15) * 15, 0, 0);
+        date.setHours(date.getHours() + 1);
+        return {
+          date: isoToDateInput(date.toISOString()),
+          time: isoToTimeInput(date.toISOString()),
+        };
+      }
+
+      function applyTripFareMultiplier(baseFare, tripType) {
+        return tripType === 'return'
+          ? Math.round(baseFare * 2 * 100) / 100
+          : Math.round(baseFare * 100) / 100;
+      }
+
+      function formatGbp(amount) {
+        return '£' + Number(amount).toFixed(2);
+      }
+
+      function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+
+      function resetCreateQuoteState() {
+        createQuoteState = null;
+        document.getElementById('createEstimatePanel').classList.add('hidden');
+        document.getElementById('createDistanceLabel').textContent = '—';
+        document.getElementById('createDurationLabel').textContent = '—';
+        document.getElementById('createFareLabel').textContent = '—';
+        document.getElementById('bookingCreateSubmitBtn').disabled = true;
+      }
+
+      function syncCreateTripTypeFields() {
+        const wrap = document.getElementById('createReturnPickupWrap');
+        wrap.classList.toggle('hidden', createTripType !== 'return');
+        if (createTripType !== 'return') {
+          document.getElementById('createReturnPickupDate').value = '';
+          document.getElementById('createReturnPickupTime').value = '';
+        }
+        resetCreateQuoteState();
+      }
+
+      function setCreateTripType(tripType) {
+        createTripType = tripType === 'return' ? 'return' : 'one-way';
+        document
+          .querySelectorAll('#createTripTypeToggle button')
+          .forEach((btn) => {
+            btn.classList.toggle(
+              'active',
+              btn.getAttribute('data-trip') === createTripType,
+            );
+          });
+        syncCreateTripTypeFields();
+      }
+
+      function updateCreateFareDisplay() {
+        if (!createQuoteState) return;
+        const vehicleType = document.getElementById('createVehicleType').value;
+        const baseFare = createQuoteState.fares[vehicleType];
+        if (baseFare == null) return;
+        const fare = applyTripFareMultiplier(baseFare, createTripType);
+        document.getElementById('createFareLabel').textContent = formatGbp(fare);
+      }
+
+      function hidePlacesSuggestions(listId) {
+        const list = document.getElementById(listId);
+        if (list) list.classList.add('hidden');
+      }
+
+      function bindPlacesAutocomplete(inputId, listId) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+        if (!input || !list) return;
+
+        input.addEventListener('input', () => {
+          resetCreateQuoteState();
+          const q = input.value.trim();
+          if (placesSearchTimer) clearTimeout(placesSearchTimer);
+          if (q.length < 3) {
+            list.innerHTML = '';
+            list.classList.add('hidden');
+            return;
+          }
+          placesSearchTimer = setTimeout(async () => {
+            try {
+              const suggestions = await api('/routing/places', {
+                method: 'POST',
+                useAuth: false,
+                body: JSON.stringify({ input: q }),
+              });
+              if (!Array.isArray(suggestions) || !suggestions.length) {
+                list.innerHTML = '';
+                list.classList.add('hidden');
+                return;
+              }
+              list.innerHTML = '';
+              suggestions.forEach((item) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = item.description;
+                btn.addEventListener('click', () => {
+                  input.value = item.description;
+                  list.innerHTML = '';
+                  list.classList.add('hidden');
+                  resetCreateQuoteState();
+                });
+                li.appendChild(btn);
+                list.appendChild(li);
+              });
+              list.classList.remove('hidden');
+            } catch {
+              list.classList.add('hidden');
+            }
+          }, 280);
+        });
+
+        input.addEventListener('blur', () => {
+          setTimeout(() => hidePlacesSuggestions(listId), 150);
+        });
+      }
+
+      function readCreateFormBasics() {
+        const passengers = parseInt(
+          document.getElementById('createPassengers').value,
+          10,
+        );
+        return {
+          customerName: document
+            .getElementById('createCustomerName')
+            .value.trim(),
+          contactNumber: document
+            .getElementById('createContactNumber')
+            .value.trim(),
+          email: document.getElementById('createEmail').value.trim(),
+          from: document.getElementById('createFrom').value.trim(),
+          to: document.getElementById('createTo').value.trim(),
+          roomNo: document.getElementById('createRoomNo').value.trim(),
+          passengers:
+            Number.isFinite(passengers) && passengers >= 1 && passengers <= 8
+              ? passengers
+              : null,
+          note: document.getElementById('createNote').value.trim(),
+          preferredPickupAt: dateTimeInputsToIso(
+            document.getElementById('createPreferredPickupDate').value,
+            document.getElementById('createPreferredPickupTime').value,
+          ),
+          returnPickupAt: dateTimeInputsToIso(
+            document.getElementById('createReturnPickupDate').value,
+            document.getElementById('createReturnPickupTime').value,
+          ),
+        };
+      }
+
+      function validateCreateFormBasics() {
+        const data = readCreateFormBasics();
+        if (
+          !data.customerName ||
+          !data.contactNumber ||
+          !data.from ||
+          !data.to
+        ) {
+          return 'Please enter customer name, contact, pickup, and drop-off.';
+        }
+        if (!data.email || !isValidEmail(data.email)) {
+          return 'Please enter a valid email address.';
+        }
+        if (data.passengers == null) {
+          return 'Passengers must be between 1 and 8.';
+        }
+        if (!data.preferredPickupAt) {
+          return 'Please set a preferred pickup date and time.';
+        }
+        return '';
+      }
+
+      function openCreateBookingModal() {
+        const modal = document.getElementById('bookingCreateModal');
+        const errEl = document.getElementById('bookingCreateError');
+        document.getElementById('bookingCreateForm').reset();
+        createTripType = 'one-way';
+        setCreateTripType('one-way');
+        const pickup = getDefaultPickupParts();
+        document.getElementById('createPreferredPickupDate').value = pickup.date;
+        document.getElementById('createPreferredPickupTime').value = pickup.time;
+        document.getElementById('createPassengers').value = '1';
+        document.getElementById('createVehicleType').value = 'executive';
+        document.getElementById('createStatus').value = 'submitted';
+        resetCreateQuoteState();
+        errEl.classList.add('hidden');
+        errEl.textContent = '';
+        hidePlacesSuggestions('createFromSuggestions');
+        hidePlacesSuggestions('createToSuggestions');
+        modal.classList.remove('hidden');
+      }
+
+      function closeCreateBookingModal() {
+        document.getElementById('bookingCreateModal').classList.add('hidden');
+        document.getElementById('bookingCreateError').classList.add('hidden');
+        document.getElementById('bookingCreateError').textContent = '';
+        resetCreateQuoteState();
+      }
+
+      async function runCreateEstimate() {
+        const errEl = document.getElementById('bookingCreateError');
+        const btn = document.getElementById('bookingCreateEstimateBtn');
+        const validationError = validateCreateFormBasics();
+        if (validationError) {
+          errEl.textContent = validationError;
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const data = readCreateFormBasics();
+        errEl.classList.add('hidden');
+        btn.disabled = true;
+        btn.textContent = 'Calculating…';
+        try {
+          const vehicleType = document.getElementById('createVehicleType').value;
+          const quote = await api('/routing/quote', {
+            method: 'POST',
+            useAuth: false,
+            body: JSON.stringify({
+              from: data.from,
+              to: data.to,
+              vehicleType,
+            }),
+          });
+          createQuoteState = {
+            distanceMiles: quote.distanceMiles,
+            durationMinutes: quote.durationMinutes,
+            fares: quote.fares || {},
+          };
+          document
+            .getElementById('createEstimatePanel')
+            .classList.remove('hidden');
+          document.getElementById('createDistanceLabel').textContent = String(
+            quote.distanceMiles,
+          );
+          document.getElementById('createDurationLabel').textContent =
+            quote.durationMinutes != null
+              ? quote.durationMinutes + ' min'
+              : '—';
+          updateCreateFareDisplay();
+          document.getElementById('bookingCreateSubmitBtn').disabled = false;
+        } catch (e) {
+          errEl.textContent = e.message || 'Could not calculate estimate';
+          errEl.classList.remove('hidden');
+          resetCreateQuoteState();
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Get estimate';
+        }
+      }
+
+      async function submitCreateBooking() {
+        if (!createQuoteState) return;
+        const errEl = document.getElementById('bookingCreateError');
+        const validationError = validateCreateFormBasics();
+        if (validationError) {
+          errEl.textContent = validationError;
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const data = readCreateFormBasics();
+        const vehicleType = document.getElementById('createVehicleType').value;
+        const baseFare = createQuoteState.fares[vehicleType];
+        if (baseFare == null) {
+          errEl.textContent = 'Please get an estimate first.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const estimatedFare = applyTripFareMultiplier(baseFare, createTripType);
+        const payload = {
+          customerName: data.customerName,
+          email: data.email,
+          contactNumber: data.contactNumber,
+          from: data.from,
+          to: data.to,
+          roomNo: data.roomNo || undefined,
+          passengers: data.passengers,
+          note: data.note || undefined,
+          distanceMiles: createQuoteState.distanceMiles,
+          estimatedFare,
+          vehicleType,
+          tripType: createTripType,
+          preferredPickupAt: data.preferredPickupAt,
+          status: document.getElementById('createStatus').value,
+        };
+        if (createTripType === 'return' && data.returnPickupAt) {
+          payload.returnPickupAt = data.returnPickupAt;
+        }
+        const btn = document.getElementById('bookingCreateSubmitBtn');
+        errEl.classList.add('hidden');
+        btn.disabled = true;
+        try {
+          const created = await api('/bookings', {
+            method: 'POST',
+            useAuth: false,
+            body: JSON.stringify(payload),
+          });
+          closeCreateBookingModal();
+          loadBookings();
+          if (created && created.id) {
+            openBookingModal(created.id);
+          }
+        } catch (e) {
+          errEl.textContent = e.message || 'Could not create booking';
+          errEl.classList.remove('hidden');
+        } finally {
+          btn.disabled = !createQuoteState;
+        }
+      }
+
       function closeBookingModal() {
         activeBookingId = null;
         activeBookingRef = '';
@@ -1575,7 +2205,7 @@
           booking.passengers != null ? String(booking.passengers) : '1';
         document.getElementById('editRoomNo').value = booking.roomNo || '';
         document.getElementById('editTo').value = booking.to || '';
-        document.getElementById('editVia').value = booking.via || '';
+        document.getElementById('editNote').value = booking.note || '';
         document.getElementById('editVehicleType').value =
           booking.vehicleType || '';
         document.getElementById('editDistanceMiles').value = String(
@@ -1623,7 +2253,7 @@
             parseInt(document.getElementById('editPassengers').value, 10) || 1,
           roomNo: document.getElementById('editRoomNo').value.trim(),
           to: document.getElementById('editTo').value.trim(),
-          via: document.getElementById('editVia').value.trim(),
+          note: document.getElementById('editNote').value.trim(),
           vehicleType: document.getElementById('editVehicleType').value.trim(),
           distanceMiles: Number(
             document.getElementById('editDistanceMiles').value,
@@ -2215,7 +2845,63 @@
           readBookingFiltersFromForm();
           loadBookings();
         });
+      document
+        .getElementById('bookingsCreateBtn')
+        .addEventListener('click', openCreateBookingModal);
       setupBookingFilterListeners();
+
+      document
+        .getElementById('bookingCreateClose')
+        .addEventListener('click', closeCreateBookingModal);
+      document
+        .getElementById('bookingCreateCancel')
+        .addEventListener('click', closeCreateBookingModal);
+      document
+        .getElementById('bookingCreateBackdrop')
+        .addEventListener('click', closeCreateBookingModal);
+      document
+        .getElementById('bookingCreateEstimateBtn')
+        .addEventListener('click', runCreateEstimate);
+      document
+        .getElementById('bookingCreateSubmitBtn')
+        .addEventListener('click', submitCreateBooking);
+      document
+        .getElementById('createVehicleType')
+        .addEventListener('change', updateCreateFareDisplay);
+      document
+        .querySelectorAll('#createTripTypeToggle button')
+        .forEach((btn) => {
+          btn.addEventListener('click', () => {
+            setCreateTripType(btn.getAttribute('data-trip'));
+            if (createQuoteState) updateCreateFareDisplay();
+          });
+        });
+      document.getElementById('bookingCreateForm').addEventListener('input', (e) => {
+        const target = e.target;
+        if (
+          target &&
+          (target.id === 'createFrom' ||
+            target.id === 'createTo' ||
+            target.id === 'createPassengers' ||
+            target.id === 'createCustomerName' ||
+            target.id === 'createContactNumber' ||
+            target.id === 'createEmail')
+        ) {
+          resetCreateQuoteState();
+        }
+      });
+      document
+        .getElementById('bookingCreateForm')
+        .addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (createQuoteState) {
+            submitCreateBooking();
+          } else {
+            runCreateEstimate();
+          }
+        });
+      bindPlacesAutocomplete('createFrom', 'createFromSuggestions');
+      bindPlacesAutocomplete('createTo', 'createToSuggestions');
 
       document
         .getElementById('bookingModalClose')
@@ -2258,6 +2944,14 @@
             .classList.contains('hidden')
         ) {
           closeDeleteConfirmModal();
+          return;
+        }
+        if (
+          !document
+            .getElementById('bookingCreateModal')
+            .classList.contains('hidden')
+        ) {
+          closeCreateBookingModal();
           return;
         }
         if (

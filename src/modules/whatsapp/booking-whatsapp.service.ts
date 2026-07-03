@@ -42,14 +42,6 @@ export class BookingWhatsappService {
     return returnPickupAt ? this.formatDateTimeLabel(returnPickupAt) : 'None';
   }
 
-  private formatStopoverLocation(via: string): string {
-    const trimmed = via.trim();
-    if (!trimmed || trimmed.toLowerCase() === 'car') {
-      return 'None';
-    }
-    return trimmed;
-  }
-
   private formatRoomNo(roomNo: string | null | undefined): string {
     const trimmed = roomNo?.trim();
     return trimmed ? trimmed : 'None';
@@ -101,7 +93,7 @@ export class BookingWhatsappService {
       contactNumber: booking.contactNumber,
       email: booking.email,
       departureLocation: booking.pickupFrom,
-      stopoverLocation: this.formatStopoverLocation(booking.via),
+      stopoverLocation: 'None',
       roomNo: this.formatRoomNo(booking.roomNo),
       passengers: this.formatPassengers(booking.passengers),
       destinationLocation: booking.dropoffTo,

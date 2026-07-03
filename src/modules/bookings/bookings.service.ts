@@ -35,12 +35,12 @@ export type BookingResponse = {
   from: string;
   roomNo: string | null;
   passengers: number | null;
+  note: string | null;
   to: string;
   distanceMiles: number;
   estimatedFare: number;
   vehicleType: string;
   tripType: 'one-way' | 'return';
-  via: string;
   preferredPickupAt: string;
   returnPickupAt: string | null;
   status: BookingStatus;
@@ -116,12 +116,12 @@ export class BookingsService {
       from: row.pickupFrom,
       roomNo: row.roomNo,
       passengers: row.passengers,
+      note: row.note,
       to: row.dropoffTo,
       distanceMiles: row.distanceMiles,
       estimatedFare: row.estimatedFare,
       vehicleType: row.vehicleType,
       tripType: this.normalizeTripType(row.tripType),
-      via: row.via,
       preferredPickupAt: row.preferredPickupAt.toISOString(),
       returnPickupAt: row.returnPickupAt?.toISOString() ?? null,
       status: row.status,
@@ -159,11 +159,11 @@ export class BookingsService {
           roomNo: dto.roomNo?.trim() || null,
           passengers: dto.passengers ?? null,
           dropoffTo: dto.to.trim(),
+          note: dto.note?.trim() || null,
           distanceMiles: dto.distanceMiles,
           estimatedFare: dto.estimatedFare,
           vehicleType: dto.vehicleType.trim(),
           tripType,
-          via: dto.via.trim(),
           preferredPickupAt: new Date(dto.preferredPickupAt),
           returnPickupAt: dto.returnPickupAt ? new Date(dto.returnPickupAt) : null,
           status,
@@ -302,6 +302,9 @@ export class BookingsService {
     if (dto.to !== undefined) {
       data.dropoffTo = dto.to.trim();
     }
+    if (dto.note !== undefined) {
+      data.note = dto.note.trim() || null;
+    }
     if (dto.distanceMiles !== undefined) {
       data.distanceMiles = dto.distanceMiles;
     }
@@ -310,9 +313,6 @@ export class BookingsService {
     }
     if (dto.vehicleType !== undefined) {
       data.vehicleType = dto.vehicleType.trim();
-    }
-    if (dto.via !== undefined) {
-      data.via = dto.via.trim();
     }
     if (dto.preferredPickupAt !== undefined) {
       data.preferredPickupAt = new Date(dto.preferredPickupAt);

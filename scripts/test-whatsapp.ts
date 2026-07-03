@@ -74,14 +74,6 @@ function formatDateTimeLabel(date: Date): string {
   return `${dateLabel} at ${timeLabel}`;
 }
 
-function formatStopoverLocation(via: string): string {
-  const trimmed = via.trim();
-  if (!trimmed || trimmed.toLowerCase() === 'car') {
-    return 'None';
-  }
-  return trimmed;
-}
-
 function formatRoomNo(roomNo: string | null | undefined): string {
   const trimmed = roomNo?.trim();
   return trimmed ? trimmed : 'None';
@@ -108,7 +100,7 @@ function bookingToPayload(booking: Booking): SamplePayload {
     contactNumber: booking.contactNumber,
     email: booking.email,
     departureLocation: booking.pickupFrom,
-    stopoverLocation: formatStopoverLocation(booking.via),
+    stopoverLocation: 'None',
     roomNo: formatRoomNo(booking.roomNo),
     passengers: formatPassengers(booking.passengers),
     destinationLocation: booking.dropoffTo,

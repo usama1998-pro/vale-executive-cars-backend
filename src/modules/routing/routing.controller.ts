@@ -17,7 +17,7 @@ export class RoutingController {
   @ApiOperation({
     summary: 'Get driving distance and fare quote',
     description:
-      'Geocodes pickup/drop-off (and optional via) with Google Geocoding, queries Google Directions for driving distance, and returns fares for all vehicle types. With via, total distance is Pickup→Via plus Via→Drop-off; fare is calculated once on that combined distance.',
+      'Geocodes pickup and drop-off with Google Geocoding, queries Google Directions for driving distance, and returns fares for all vehicle types.',
   })
   @ApiResponse({
     status: 400,
