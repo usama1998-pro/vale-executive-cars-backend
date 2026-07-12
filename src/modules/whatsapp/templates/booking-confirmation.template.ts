@@ -8,7 +8,7 @@ import {
 } from '../utils/template-parameter.util';
 
 /**
- * Meta template: vale_executive_booking
+ * Meta template: vale_booking_message
  *
  * A new customer booking has been received.
  *
@@ -16,35 +16,39 @@ import {
  * • Name: {{1}}
  * • Phone Number: {{2}}
  * • Email Address: {{3}}
+ * • Room No. : {{4}}
+ * • Passengers: {{5}}
  *
  * Journey Information:
- * • Departure Location: {{4}}
- * • Stopover Location: {{5}}
- * • Room No. : {{6}}
- * • Passengers: {{7}}
- * • Destination Location: {{8}}
- * • Pickup Date  & Time: {{9}}
- * • Return Date & Time: {{10}}
+ * • Departure Location: {{6}}
+ * • Destination Location: {{7}}
+ * • Pickup Date  & Time: {{8}}
+ * • Return Date & Time: {{9}}
  *
  * Selected Service:
- * {{11}}
+ * {{10}}
  *
- * Total Fare: {{12}}
+ * Total Fare: {{11}}
+ *
+ * Note:
+ * {{12}}
+ *
+ * Please review the details and contact the customer if required
  */
 export type BookingConfirmationTemplateInput = {
   to: string;
   customerName: string;
   contactNumber: string;
   email: string;
-  departureLocation: string;
-  stopoverLocation: string;
   roomNo: string;
   passengers: string;
+  departureLocation: string;
   destinationLocation: string;
   pickupDateLabel: string;
   returnDateLabel: string;
   selectedService: string;
   totalFare: string;
+  note: string;
   templateName: string;
   languageCode: string;
 };
@@ -73,19 +77,15 @@ export function buildBookingConfirmationBodyComponent(
       },
       {
         type: 'text',
-        text: sanitizeTemplateParameter(input.departureLocation, maxLength),
-      },
-      {
-        type: 'text',
-        text: sanitizeTemplateParameter(input.stopoverLocation, maxLength),
-      },
-      {
-        type: 'text',
         text: sanitizeTemplateParameter(input.roomNo, maxLength),
       },
       {
         type: 'text',
         text: sanitizeTemplateParameter(input.passengers, maxLength),
+      },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.departureLocation, maxLength),
       },
       {
         type: 'text',
@@ -107,6 +107,10 @@ export function buildBookingConfirmationBodyComponent(
         type: 'text',
         text: sanitizeTemplateParameter(input.totalFare, maxLength),
       },
+      {
+        type: 'text',
+        text: sanitizeTemplateParameter(input.note, maxLength),
+      },
     ],
   };
 }
@@ -126,15 +130,15 @@ export function buildBookingConfirmationTemplateRequest(
           customerName: input.customerName,
           contactNumber: input.contactNumber,
           email: input.email,
-          departureLocation: input.departureLocation,
-          stopoverLocation: input.stopoverLocation,
           roomNo: input.roomNo,
           passengers: input.passengers,
+          departureLocation: input.departureLocation,
           destinationLocation: input.destinationLocation,
           pickupDateLabel: input.pickupDateLabel,
           returnDateLabel: input.returnDateLabel,
           selectedService: input.selectedService,
           totalFare: input.totalFare,
+          note: input.note,
         }),
       ],
     },

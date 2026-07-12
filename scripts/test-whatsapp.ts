@@ -26,15 +26,15 @@ const SAMPLE_BOOKING: SamplePayload = {
   customerName: 'Test Customer',
   contactNumber: '447700900123',
   email: 'test@example.com',
-  departureLocation: 'Heathrow Airport Terminal 5',
-  stopoverLocation: 'None',
   roomNo: '214',
   passengers: '2',
+  departureLocation: 'Heathrow Airport Terminal 5',
   destinationLocation: 'Central London',
   pickupDateLabel: '5 June 2026 at 3:30 pm',
   returnDateLabel: '6 June 2026 at 4:00 pm',
   selectedService: 'EXECUTIVE',
   totalFare: '£75.00',
+  note: 'Please call on arrival',
 };
 
 function usage(): void {
@@ -79,6 +79,11 @@ function formatRoomNo(roomNo: string | null | undefined): string {
   return trimmed ? trimmed : 'None';
 }
 
+function formatNote(note: string | null | undefined): string {
+  const trimmed = note?.trim();
+  return trimmed ? trimmed : 'None';
+}
+
 function formatPassengers(passengers: number | null | undefined): string {
   return String(passengers ?? 1);
 }
@@ -99,10 +104,9 @@ function bookingToPayload(booking: Booking): SamplePayload {
     customerName: booking.customerName,
     contactNumber: booking.contactNumber,
     email: booking.email,
-    departureLocation: booking.pickupFrom,
-    stopoverLocation: 'None',
     roomNo: formatRoomNo(booking.roomNo),
     passengers: formatPassengers(booking.passengers),
+    departureLocation: booking.pickupFrom,
     destinationLocation: booking.dropoffTo,
     pickupDateLabel: formatDateTimeLabel(booking.preferredPickupAt),
     returnDateLabel: booking.returnPickupAt
@@ -110,6 +114,7 @@ function bookingToPayload(booking: Booking): SamplePayload {
       : 'None',
     selectedService: formatSelectedService(booking.vehicleType),
     totalFare: formatTotalFare(booking.estimatedFare),
+    note: formatNote(booking.note),
   };
 }
 

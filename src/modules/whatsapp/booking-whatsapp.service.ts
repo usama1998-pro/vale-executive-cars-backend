@@ -47,6 +47,11 @@ export class BookingWhatsappService {
     return trimmed ? trimmed : 'None';
   }
 
+  private formatNote(note: string | null | undefined): string {
+    const trimmed = note?.trim();
+    return trimmed ? trimmed : 'None';
+  }
+
   private formatPassengers(passengers: number | null | undefined): string {
     return String(passengers ?? 1);
   }
@@ -92,15 +97,15 @@ export class BookingWhatsappService {
       customerName: booking.customerName,
       contactNumber: booking.contactNumber,
       email: booking.email,
-      departureLocation: booking.pickupFrom,
-      stopoverLocation: 'None',
       roomNo: this.formatRoomNo(booking.roomNo),
       passengers: this.formatPassengers(booking.passengers),
+      departureLocation: booking.pickupFrom,
       destinationLocation: booking.dropoffTo,
       pickupDateLabel: this.formatDateTimeLabel(booking.preferredPickupAt),
       returnDateLabel: this.formatReturnDateLabel(booking.returnPickupAt),
       selectedService: this.formatSelectedService(booking.vehicleType),
       totalFare: this.formatTotalFare(booking.estimatedFare),
+      note: this.formatNote(booking.note),
     });
   }
 

@@ -21,16 +21,6 @@ export class SendBookingConfirmationDto {
   @MinLength(3)
   email!: string;
 
-  @ApiProperty({ example: 'Heathrow Airport Terminal 5' })
-  @IsString()
-  @MinLength(1)
-  departureLocation!: string;
-
-  @ApiPropertyOptional({ example: 'None' })
-  @IsOptional()
-  @IsString()
-  stopoverLocation?: string;
-
   @ApiPropertyOptional({ example: '214' })
   @IsOptional()
   @IsString()
@@ -40,6 +30,11 @@ export class SendBookingConfirmationDto {
   @IsOptional()
   @IsString()
   passengers?: string;
+
+  @ApiProperty({ example: 'Heathrow Airport Terminal 5' })
+  @IsString()
+  @MinLength(1)
+  departureLocation!: string;
 
   @ApiProperty({ example: 'Central London' })
   @IsString()
@@ -65,6 +60,11 @@ export class SendBookingConfirmationDto {
   @IsString()
   @MinLength(1)
   totalFare!: string;
+
+  @ApiPropertyOptional({ example: 'Please call on arrival' })
+  @IsOptional()
+  @IsString()
+  note?: string;
 }
 
 export class TestBookingConfirmationFromBookingDto {
